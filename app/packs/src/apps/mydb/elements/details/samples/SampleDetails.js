@@ -77,6 +77,7 @@ import CommentModal from 'src/components/common/CommentModal';
 import { formatTimeStampsOfElement } from 'src/utilities/timezoneHelper';
 import { commentActivation } from 'src/utilities/CommentHelper';
 import IndigoServiceFetcher from '../../../../../fetchers/InidigoFetcher';
+import SamplesFetcher from '../../../../../fetchers/SamplesFetcher';
 
 const MWPrecision = 6;
 
@@ -1473,15 +1474,22 @@ export default class SampleDetails extends React.Component {
   }
 
   async convertFileContentWithIndigo() {
-    const molfile = this.state.sample.molfile;
     const { molfileConverstionRequired, sample } = this.state;
+    const molfile = sample.molfile;
+
     if (molfileConverstionRequired) {
       // call indigo service convert api
-      const conversionResponse = await IndigoServiceFetcher.convertMolfileToDefaultIndigo({
+      IndigoServiceFetcher.convertMolfileToDefaultIndigo({
         struct: molfile,
         output_formate: null
-      });
-      console.log({ conversionResponse });
+      }).then(res => {
+        if (res && res.struct) {
+          console.log(res.struct, "response???");
+          sample.molfile = res.struct;
+          SamplesFetcher.update(sample);
+          this.setState({ molfileConverstionRequired: false });
+        }
+      }).catch(err => console.log(err.message));
     }
   }
 

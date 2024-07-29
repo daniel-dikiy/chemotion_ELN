@@ -22,6 +22,7 @@ export default class IndigoServiceFetcher {
     const root = "http://localhost:8002";
     return fetch(`${root}/v2/indigo/convert`, {
       // credentials: 'same-origin',
+      mode: 'cors',
       method: 'POST',
       headers: {
         Accept: 'application/json',
