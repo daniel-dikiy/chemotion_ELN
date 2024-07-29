@@ -76,6 +76,7 @@ import CommentActions from 'src/stores/alt/actions/CommentActions';
 import CommentModal from 'src/components/common/CommentModal';
 import { formatTimeStampsOfElement } from 'src/utilities/timezoneHelper';
 import { commentActivation } from 'src/utilities/CommentHelper';
+import IndigoServiceFetcher from '../../../../../fetchers/InidigoFetcher';
 
 const MWPrecision = 6;
 
@@ -139,6 +140,7 @@ export default class SampleDetails extends React.Component {
       saveInventoryAction: false,
       isChemicalEdited: false,
       currentUser,
+      molfileConverstionRequired: false
     };
 
     this.enableComputedProps = MatrixCheck(currentUser.matrix, 'computedProp');
@@ -164,6 +166,8 @@ export default class SampleDetails extends React.Component {
 
     this.handleStructureEditorSave = this.handleStructureEditorSave.bind(this);
     this.handleStructureEditorCancel = this.handleStructureEditorCancel.bind(this);
+    this.convertFileContentWithIndigo = this.convertFileContentWithIndigo.bind(this);
+    this.isMolfileConverstionRequired = this.isMolfileConverstionRequired.bind(this);
   }
 
   componentDidMount() {
@@ -178,13 +182,16 @@ export default class SampleDetails extends React.Component {
     if (MatrixCheck(currentUser.matrix, commentActivation) && !sample.isNew) {
       CommentActions.fetchComments(sample);
     }
+
+    // sample file conversion required or not?
+    this.isMolfileConverstionRequired();
   }
 
   UNSAFE_componentWillReceiveProps(nextProps) {
     if (
       (nextProps.sample.isNew
-       && (typeof (nextProps.sample.molfile) === 'undefined'
-        || (nextProps.sample.molfile || '').length === 0)
+        && (typeof (nextProps.sample.molfile) === 'undefined'
+          || (nextProps.sample.molfile || '').length === 0)
       )
       || (typeof (nextProps.sample.molfile) !== 'undefined' && nextProps.sample.molecule.inchikey === 'DUMMY')
     ) {
@@ -777,9 +784,9 @@ export default class SampleDetails extends React.Component {
           <b>Chemical identifiers</b>
           {sample.decoupled
             && (
-            <span className="text-danger">
-              &nbsp;[decoupled]
-            </span>
+              <span className="text-danger">
+                &nbsp;[decoupled]
+              </span>
             )}
         </Col>
         <div className="col-md-6">
@@ -996,8 +1003,8 @@ export default class SampleDetails extends React.Component {
     return (
       <div>
         <ConfirmClose el={sample} />
-        { isChemicalTab ? null : saveAndClose }
-        { isChemicalTab ? saveForChemical : save}
+        {isChemicalTab ? null : saveAndClose}
+        {isChemicalTab ? saveForChemical : save}
       </div>
     );
   }
@@ -1044,9 +1051,9 @@ export default class SampleDetails extends React.Component {
           <OverlayTrigger placement="bottom" overlay={<Tooltip id="sampleDates">{titleTooltip}</Tooltip>}>
             <span>
               <i className="icon-sample" />
-            &nbsp;&nbsp;
+              &nbsp;&nbsp;
               {sample.title()}
-            &nbsp;&nbsp;
+              &nbsp;&nbsp;
             </span>
           </OverlayTrigger>
           <ShowUserLabels element={sample} />
@@ -1324,7 +1331,7 @@ export default class SampleDetails extends React.Component {
         ElementActions.updateSample(sample);
         Utils.downloadFile({
           contents: `/api/v1/code_logs/print_analyses_codes?sample_id=${sample.id}`
-                    + `&analyses_ids[]=${analysis.id}&type=nmr_analysis&size=small`
+            + `&analyses_ids[]=${analysis.id}&type=nmr_analysis&size=small`
         });
         break;
       case chmoConversions.nmr_13c.termId:
@@ -1333,7 +1340,7 @@ export default class SampleDetails extends React.Component {
         ElementActions.updateSample(sample);
         Utils.downloadFile({
           contents: `/api/v1/code_logs/print_analyses_codes?sample_id=${sample.id}`
-          + `&analyses_ids[]=${analysis.id}&type=nmr_analysis&size=small`
+            + `&analyses_ids[]=${analysis.id}&type=nmr_analysis&size=small`
         });
         break;
       case 'Others':
@@ -1341,7 +1348,7 @@ export default class SampleDetails extends React.Component {
         ElementActions.updateSample(sample);
         Utils.downloadFile({
           contents: `/api/v1/code_logs/print_analyses_codes?sample_id=${sample.id}`
-                    + `&analyses_ids[]=${a1.id}&type=analysis&size=small`
+            + `&analyses_ids[]=${a1.id}&type=analysis&size=small`
         });
         break;
       case 'Others2x':
@@ -1350,7 +1357,7 @@ export default class SampleDetails extends React.Component {
         ElementActions.updateSample(sample);
         Utils.downloadFile({
           contents: `/api/v1/code_logs/print_analyses_codes?sample_id=${sample.id}`
-                    + `&analyses_ids[]=${a1.id}&analyses_ids[]=${a2.id}&type=analysis&size=small`
+            + `&analyses_ids[]=${a1.id}&analyses_ids[]=${a2.id}&type=analysis&size=small`
         });
         break;
       case 'Others3x':
@@ -1360,7 +1367,7 @@ export default class SampleDetails extends React.Component {
         ElementActions.updateSample(sample);
         Utils.downloadFile({
           contents: `/api/v1/code_logs/print_analyses_codes?sample_id=${sample.id}`
-              + `&analyses_ids[]=${a1.id}&analyses_ids[]=${a2.id}&analyses_ids[]=${a3.id}&type=analysis&size=small`
+            + `&analyses_ids[]=${a1.id}&analyses_ids[]=${a2.id}&analyses_ids[]=${a3.id}&type=analysis&size=small`
         });
         break;
       default:
@@ -1380,6 +1387,7 @@ export default class SampleDetails extends React.Component {
   }
 
   svgOrLoading(sample) {
+    const { molfileConverstionRequired } = this.state;
     let svgPath = '';
     if (this.state.loadingMolecule) {
       svgPath = '/images/wild_card/loading-bubbles.svg';
@@ -1392,18 +1400,32 @@ export default class SampleDetails extends React.Component {
         ? (
           <div
             className={className}
-            onClick={this.showStructureEditor.bind(this)}
-            onKeyPress
-            role="button"
-            tabIndex="0"
 
           >
-            <Glyphicon className="pull-right" glyph="pencil" />
-            <SVG key={svgPath} src={svgPath} className="molecule-mid" />
+            <div
+              onClick={this.showStructureEditor.bind(this)}
+              onKeyPress
+              role="button"
+              tabIndex="0"
+            >
+              <Glyphicon className="pull-right ml-5" glyph="pencil" />
+              <SVG key={svgPath} src={svgPath} className="molecule-mid" />
+            </div>
+            {molfileConverstionRequired &&
+              <div
+                className={"file-type-conversion-button"}
+                onClick={this.convertFileContentWithIndigo}
+                onKeyPress
+                role="button"
+                tabIndex="0"
+              >
+                <Glyphicon className="pull-right" glyph="refresh" />
+              </div>
+            }
           </div>
         )
         : (
-          <div className={className}>
+          <div className={"className"}>
             <SVG key={svgPath} src={svgPath} className="molecule-mid" />
           </div>
         )
@@ -1450,6 +1472,25 @@ export default class SampleDetails extends React.Component {
     this.setState({ showInchikey: !showInchikey });
   }
 
+  async convertFileContentWithIndigo() {
+    const molfile = this.state.sample.molfile;
+    const { molfileConverstionRequired, sample } = this.state;
+    if (molfileConverstionRequired) {
+      // call indigo service convert api
+      const conversionResponse = await IndigoServiceFetcher.convertMolfileToDefaultIndigo({
+        struct: molfile,
+        output_formate: null
+      });
+      console.log({ conversionResponse });
+    }
+  }
+
+  isMolfileConverstionRequired() {
+    const molfile = this.state.sample.molfile;
+    if (!molfile.includes("INDIGO")) {
+      this.setState({ molfileConverstionRequired: true });
+    }
+  }
   decoupleMolecule() {
     const { sample } = this.state;
     MoleculesFetcher.decouple(sample.molfile, sample.sample_svg_file, sample.decoupled)
@@ -1586,29 +1627,29 @@ export default class SampleDetails extends React.Component {
     const { pageMessage } = this.state;
     const messageBlock = (pageMessage
       && (pageMessage.error.length > 0 || pageMessage.warning.length > 0)) ? (
-        <Alert bsStyle="warning" style={{ marginBottom: 'unset', padding: '5px', marginTop: '10px' }}>
-          <strong>Structure Alert</strong>
-          &nbsp;
-          <Button
-            bsSize="xsmall"
-            bsStyle="warning"
-            onClick={() => this.setState({ pageMessage: null })}
-          >
-            Close Alert
-          </Button>
-          <br />
-          {
+      <Alert bsStyle="warning" style={{ marginBottom: 'unset', padding: '5px', marginTop: '10px' }}>
+        <strong>Structure Alert</strong>
+        &nbsp;
+        <Button
+          bsSize="xsmall"
+          bsStyle="warning"
+          onClick={() => this.setState({ pageMessage: null })}
+        >
+          Close Alert
+        </Button>
+        <br />
+        {
           pageMessage.error.map((m) => (
             <div key={uuid.v1()}>{m}</div>
           ))
         }
-          {
+        {
           pageMessage.warning.map((m) => (
             <div key={uuid.v1()}>{m}</div>
           ))
         }
-        </Alert>
-      ) : null;
+      </Alert>
+    ) : null;
 
     const activeTab = (this.state.activeTab !== 0 && stb.indexOf(this.state.activeTab) > -1
       && this.state.activeTab) || visible.get(0);
