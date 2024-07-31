@@ -168,7 +168,7 @@ module Chemotion
         desc 'Convert Molfile structure'
         params do
           requires :struct, type: String, desc: 'molfile'
-          optional :output_format, type: Boolean, desc: 'output_formate default output_format',
+          optional :output_format, type: String, desc: 'output_format default output_format',
                                    default: 'chemical/x-mdl-molfile'
         end
         post 'structure/convert' do
@@ -182,7 +182,6 @@ module Chemotion
               output_format: params[:output_format],
             }.to_json,
           }
-
           response = HTTParty.post("#{service_url}v2/indigo/convert", options).body
           JSON.parse(response)
         end

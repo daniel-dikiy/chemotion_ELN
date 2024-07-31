@@ -170,7 +170,6 @@ export default class CollectionTabs extends React.Component {
                 >
                   <i className='glyphicon glyphicon-pencil' />
                 </Button>
-
               </ButtonGroup>
             </td>
           </tr>
