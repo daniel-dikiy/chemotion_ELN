@@ -2,10 +2,11 @@
 import 'whatwg-fetch';
 
 export default class IndigoServiceFetcher {
-  static convertMolfileToDefaultIndigo(params) {
+  static convertMolfileStructureWithIndigo(params) {
     const { struct, output_format } = params;
 
     // enum: param output_format ***
+    // default: chemical/x-mdl-molfile
     // - chemical/x-mdl-rxnfile
     // - chemical/x-mdl-molfile
     // - chemical/x-indigo-ket
@@ -17,12 +18,9 @@ export default class IndigoServiceFetcher {
     // - chemical/x-iupac
     // - chemical/x-daylight-smarts
     // - chemical/x-inchi-aux
-    console.log(struct);
 
-    const root = "http://localhost:8002";
-    return fetch(`${root}/v2/indigo/convert`, {
-      // credentials: 'same-origin',
-      mode: 'cors',
+    return fetch(`/api/v1/molecules/indigo/structure/convert`, {
+      credentials: 'same-origin',
       method: 'POST',
       headers: {
         Accept: 'application/json',
@@ -30,7 +28,7 @@ export default class IndigoServiceFetcher {
       },
       body: JSON.stringify({
         struct,
-        // output_format  default: chemical/x-mdl-molfile
+        output_format
       }),
     })
       .then((response) => response.json())

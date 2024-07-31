@@ -159,6 +159,5 @@
       "@rails/webpacker/package/babel/preset.js",
       "@babel/preset-react"
     ]
-  },
-  "proxy": "http://localhost:8002"
+  }
 }

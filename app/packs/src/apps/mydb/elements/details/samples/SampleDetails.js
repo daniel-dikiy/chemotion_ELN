@@ -1479,15 +1479,16 @@ export default class SampleDetails extends React.Component {
 
     if (molfileConverstionRequired) {
       // call indigo service convert api
-      IndigoServiceFetcher.convertMolfileToDefaultIndigo({
+      IndigoServiceFetcher.convertMolfileStructureWithIndigo({
         struct: molfile,
         output_formate: null
       }).then(res => {
         if (res && res.struct) {
-          console.log(res.struct, "response???");
-          sample.molfile = res.struct;
-          SamplesFetcher.update(sample);
-          this.setState({ molfileConverstionRequired: false });
+          if (res?.struct) {
+            sample.molfile = res.struct;
+            SamplesFetcher.update(sample);
+            this.setState({ molfileConverstionRequired: false });
+          }
         }
       }).catch(err => console.log(err.message));
     }
