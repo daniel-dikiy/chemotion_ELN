@@ -1491,6 +1491,7 @@ export default class SampleDetails extends React.Component {
       sample.molfile = indigoMolfile?.struct;
       this.setState({ sample });
       this.handleStructureEditorSave(indigoMolfile?.struct, svg, { smiles: '' }, 'ketcher2');
+      this.setState({ molfileConverstionRequired: false });
     }
   }
 
@@ -1500,6 +1501,7 @@ export default class SampleDetails extends React.Component {
       this.setState({ molfileConverstionRequired: true });
     }
   }
+
   decoupleMolecule() {
     const { sample } = this.state;
     MoleculesFetcher.decouple(sample.molfile, sample.sample_svg_file, sample.decoupled)
