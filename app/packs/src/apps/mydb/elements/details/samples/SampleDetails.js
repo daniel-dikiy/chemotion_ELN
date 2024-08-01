@@ -77,6 +77,7 @@ import CommentModal from 'src/components/common/CommentModal';
 import { formatTimeStampsOfElement } from 'src/utilities/timezoneHelper';
 import { commentActivation } from 'src/utilities/CommentHelper';
 import StructureEditor from 'src/models/StructureEditor';
+import IndigoServiceFetcher from 'src/fetchers/InidigoFetcher';
 
 const MWPrecision = 6;
 
@@ -1481,10 +1482,15 @@ export default class SampleDetails extends React.Component {
         label: "ketcher2",
         id: 'ketcher22',
       });
-
       const imgfile = await editor.structureDef.editor?.generateImage(molfile, { outputFormat: 'svg' });
       const svg = await imgfile?.text();
-      this.handleStructureEditorSave(molfile, svg, { smiles: '' }, 'ketcher2');
+      const indigoMolfile = await IndigoServiceFetcher.convertMolfileStructure({
+        struct: molfile,
+        output_format: null
+      });
+      sample.molfile = indigoMolfile?.struct;
+      this.setState({ sample });
+      this.handleStructureEditorSave(indigoMolfile?.struct, svg, { smiles: '' }, 'ketcher2');
     }
   }
 
