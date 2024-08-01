@@ -18,7 +18,7 @@ import { cloneDeep, findIndex } from 'lodash';
 import uuid from 'uuid';
 import classNames from 'classnames';
 import Immutable from 'immutable';
-
+import EditorAttrs from 'src/components/structureEditor/StructureEditorSet';
 import ElementActions from 'src/stores/alt/actions/ElementActions';
 import ElementStore from 'src/stores/alt/stores/ElementStore';
 import DetailActions from 'src/stores/alt/actions/DetailActions';
@@ -76,8 +76,7 @@ import CommentActions from 'src/stores/alt/actions/CommentActions';
 import CommentModal from 'src/components/common/CommentModal';
 import { formatTimeStampsOfElement } from 'src/utilities/timezoneHelper';
 import { commentActivation } from 'src/utilities/CommentHelper';
-import IndigoServiceFetcher from 'src/fetchers/InidigoFetcher';
-import SamplesFetcher from 'src/fetchers/SamplesFetcher';
+import StructureEditor from 'src/models/StructureEditor';
 
 const MWPrecision = 6;
 
@@ -113,9 +112,7 @@ const rangeCheck = (field, sample) => {
 export default class SampleDetails extends React.Component {
   constructor(props) {
     super(props);
-
     const currentUser = (UserStore.getState() && UserStore.getState().currentUser) || {};
-
     this.state = {
       sample: props.sample,
       reaction: null,
@@ -141,7 +138,7 @@ export default class SampleDetails extends React.Component {
       saveInventoryAction: false,
       isChemicalEdited: false,
       currentUser,
-      molfileConverstionRequired: false
+      molfileConverstionRequired: false,
     };
 
     this.enableComputedProps = MatrixCheck(currentUser.matrix, 'computedProp');
@@ -1475,20 +1472,19 @@ export default class SampleDetails extends React.Component {
 
   async convertFileContentWithIndigo() {
     const { molfileConverstionRequired, sample } = this.state;
-    const molfile = sample.molfile;
-
+    const { molfile } = sample;
     if (molfileConverstionRequired) {
-      // call indigo service convert api
-      IndigoServiceFetcher.convertMolfileStructureWithIndigo({
-        struct: molfile,
-        output_format: null
-      }).then(res => {
-        if (res && res?.struct) {
-          sample.molfile = res.struct;
-          SamplesFetcher.update(sample);
-          this.setState({ molfileConverstionRequired: false });
-        }
-      }).catch(err => console.log(err.message));
+      const editor = new StructureEditor({
+        ...EditorAttrs['ketcher2'],
+        editor: "ketcher2",
+        extSrc: "/editors/ket2/index.html",
+        label: "ketcher2",
+        id: 'ketcher22',
+      });
+
+      const imgfile = await editor.structureDef.editor?.generateImage(molfile, { outputFormat: 'svg' });
+      const svg = await imgfile?.text();
+      this.handleStructureEditorSave(molfile, svg, { smiles: '' }, 'ketcher2');
     }
   }
 
@@ -1575,6 +1571,13 @@ export default class SampleDetails extends React.Component {
       );
     }
     return (<div />);
+  }
+
+  renderHiddenKetcher2EditorForRef() {
+
+    return (
+      <iframe id={`ketcher22`} src={"/editors/ket2/index.html"} title={`ketcher2`} height={"600px"} width="100%" style={{ border: '1px solid #000', display: 'none' }} />
+    );
   }
 
   render() {
@@ -1688,6 +1691,7 @@ export default class SampleDetails extends React.Component {
           {this.sampleFooter()}
           {this.structureEditorModal(sample)}
           {this.renderMolfileModal()}
+          {this.renderHiddenKetcher2EditorForRef()}
           <CommentModal element={sample} />
         </Panel.Body>
       </Panel>

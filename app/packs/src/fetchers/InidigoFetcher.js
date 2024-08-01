@@ -2,7 +2,7 @@
 import 'whatwg-fetch';
 
 export default class IndigoServiceFetcher {
-  static convertMolfileStructureWithIndigo(params) {
+  static convertMolfileStructure(params) {
     const { struct, output_format } = params;
 
     // enum: param output_format ***
@@ -29,6 +29,28 @@ export default class IndigoServiceFetcher {
       body: JSON.stringify({
         struct,
         output_format
+      }),
+    })
+      .then((response) => response.json())
+      .then((json) => json)
+      .catch((errorMessage) => {
+        console.log(errorMessage.message);
+      });
+  }
+
+  static rendertMolfileToSvg(params) {
+    const { struct } = params;
+
+    return fetch(`/api/v1/molecules/indigo/structure/render`, {
+      credentials: 'same-origin',
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        struct,
+        output_format: "image/svg+xml"
       }),
     })
       .then((response) => response.json())

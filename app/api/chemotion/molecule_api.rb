@@ -185,6 +185,27 @@ module Chemotion
           response = HTTParty.post("#{service_url}v2/indigo/convert", options).body
           JSON.parse(response)
         end
+
+        desc 'render Molfile structure'
+        params do
+          requires :struct, type: String, desc: 'molfile'
+          optional :output_format, type: String, desc: 'output format for molfile',
+                                   default: 'image/svg+xml'
+        end
+        post 'structure/render' do
+          service_url = Rails.configuration.indigo_service.indigo_service_url
+          options = {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: {
+              struct: params[:struct],
+              output_format: params[:output_format],
+            }.to_json,
+          }
+          response = HTTParty.post("#{service_url}v2/indigo/render", options).body
+          response
+        end
       end
 
       desc 'Return molecule by Molfile'
