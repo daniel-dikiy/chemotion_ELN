@@ -168,7 +168,7 @@ module Chemotion
         desc 'Convert Molfile structure'
         params do
           requires :struct, type: String, desc: 'molfile'
-          optional :output_format, type: String, desc: 'output_format default output_format',
+          optional :output_format, type: String, desc: 'output_format options from indigo service',
                                    default: 'chemical/x-mdl-molfile'
         end
         post 'structure/convert' do

@@ -1,4 +1,4 @@
-// for endpoints check: https://github.dev/epam/Indigo/tree/master/utils/indigo-service/backend/service
+// for more details for indigo service: https://github.dev/epam/Indigo/tree/master/utils/indigo-service/backend/service
 import 'whatwg-fetch';
 
 export default class IndigoServiceFetcher {

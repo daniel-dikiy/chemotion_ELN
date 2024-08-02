@@ -182,7 +182,6 @@ export default class SampleDetails extends React.Component {
       CommentActions.fetchComments(sample);
     }
 
-    // sample file conversion required or not?
     this.isMolfileConverstionRequired();
   }
 
@@ -1581,8 +1580,7 @@ export default class SampleDetails extends React.Component {
     return (<div />);
   }
 
-  renderHiddenKetcher2EditorForRef() {
-
+  renderHiddenKetcher2EditorIframe() {
     return (
       <iframe id={`ketcher22`} src={"/editors/ket2/index.html"} title={`ketcher2`} height={"600px"} width="100%" style={{ border: '1px solid #000', display: 'none' }} />
     );
@@ -1699,7 +1697,7 @@ export default class SampleDetails extends React.Component {
           {this.sampleFooter()}
           {this.structureEditorModal(sample)}
           {this.renderMolfileModal()}
-          {this.renderHiddenKetcher2EditorForRef()}
+          {this.renderHiddenKetcher2EditorIframe()}
           <CommentModal element={sample} />
         </Panel.Body>
       </Panel>
