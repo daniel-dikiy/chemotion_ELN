@@ -158,8 +158,7 @@ class SampleComponent extends Component {
     return this.props.material;
   }
 
-
-  materialNameWithIupac(material) { 
+  materialNameWithIupac(material) {
     let materialName = '';
     let moleculeIupacName = '';
     const iupacStyle = {
@@ -296,7 +295,7 @@ class SampleComponent extends Component {
   }
 
   componentMol(material, metricMol, metricPrefixesMol) {
-    const lockColumn = this.props.materialGroup === 'liquid' ? this.props.lockAmountColumn : this.props.lockAmountColumnSolids
+    const lockColumn = this.props.materialGroup === 'liquid' ? this.props.lockAmountColumn : this.props.lockAmountColumnSolids;
     return (
       <NumeralInputWithUnitsCompo
             key={material.id}
@@ -353,7 +352,7 @@ class SampleComponent extends Component {
 
   materialRef(material) {
     return (
-      <td> 
+      <td>
           <Radio
             disabled={!permitOn(this.props.sample)}
             name="reference"
@@ -385,7 +384,9 @@ class SampleComponent extends Component {
   }
 
   mixtureComponent(props, style) {
-    const { sample, material, deleteMaterial, connectDragSource, connectDropTarget, activeTab } = props;
+    const {
+      sample, material, deleteMaterial, connectDragSource, connectDropTarget, activeTab
+    } = props;
     const metricPrefixes = ['m', 'n', 'u'];
     const metricPrefixesMol = ['m', 'n'];
     const metricMol = (material.metrics && material.metrics.length > 2 && metricPrefixes.indexOf(material.metrics[2]) > -1) ? material.metrics[2] : 'm';
@@ -491,7 +492,7 @@ class SampleComponent extends Component {
         <td>
           {this.componentMol(material, metricMol, metricPrefixesMol)}
         </td>
-        <th></th>
+        {this.componentDensity(material, metricMol, metricPrefixesMol)}
         {this.componentConc(material, metricMolConc, metricPrefixesMolConc)}
 
         <td style={{ verticalAlign: 'top' }}>
