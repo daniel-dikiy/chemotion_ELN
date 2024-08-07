@@ -14,6 +14,7 @@ import { DragDropItemTypes } from 'src/utilities/DndConst';
 import NumeralInputWithUnitsCompo from 'src/apps/mydb/elements/details/NumeralInputWithUnitsCompo';
 import Sample from 'src/models/Sample';
 import { permitCls, permitOn } from 'src/components/common/uis';
+import SvgWithPopover from 'src/components/common/SvgWithPopover';
 
 const matSource = {
   beginDrag(props) {
@@ -171,7 +172,7 @@ class SampleComponent extends Component {
     return (
       <div style={{ display: 'inline-block', maxWidth: '100%' }}>
         <span style={iupacStyle}>
-          {moleculeIupacName}
+           {this.svgPreview(material, moleculeIupacName)}
         </span>
       </div>
     );
@@ -402,7 +403,7 @@ class SampleComponent extends Component {
           { dropEffect: 'copy' }
         )}
 
-        <td style={{ width: '10%', maxWidth: '50px' }}>
+        <td style={{ width: '10%', maxWidth: '50px', cursor: 'pointer' }}>
           {this.materialNameWithIupac(material)}
         </td>
 
@@ -525,6 +526,26 @@ class SampleComponent extends Component {
           </Button>
         </td>
       </tr>
+    );
+  }
+
+  svgPreview(material, moleculeIupacName) {
+    return (
+      <SvgWithPopover
+        hasPop
+        previewObject={{
+          txtOnly: moleculeIupacName,
+          isSVG: true,
+          className: 'component-name',
+          src: material.svgPath,
+        }}
+        popObject={{
+          title: moleculeIupacName,
+          src: material.svgPath,
+          height: '26vh',
+          width: '32vw',
+        }}
+      />
     );
   }
 

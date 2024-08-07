@@ -36,6 +36,11 @@ export default class Component extends Sample {
     return this._amount_l = amount_l;
   }
 
+  get svgPath() {
+    return this.molecule && this.molecule.molecule_svg_file
+      ? `/images/molecules/${this.molecule.molecule_svg_file}` : '';
+  }
+
   setAmount(amount, totalVolume) {
     if (!amount.unit || isNaN(amount.value)) { return; }
     if (this.density && this.density > 0 && this.material_group !== 'solid') {
