@@ -20,6 +20,8 @@ export default class SampleDetailsComponents extends React.Component {
       showModal: false,
       droppedMaterial: null,
       activeTab: 'concentration',
+      lockAmountColumn: false,
+      lockAmountColumnSolids: false,
     };
 
     this.dropSample = this.dropSample.bind(this);
@@ -100,9 +102,7 @@ export default class SampleDetailsComponents extends React.Component {
 
   updatedSampleForAmountUnitChange(changeEvent) {
     const { sample } = this.props;
-    const {
-      sampleID, amount, concType, updateVolume
-    } = changeEvent;
+    const {sampleID, amount, concType, updateVolume} = changeEvent;
     const componentIndex = this.props.sample.components.findIndex(
       (component) => component.id === sampleID
     );
@@ -111,6 +111,8 @@ export default class SampleDetailsComponents extends React.Component {
 
     if (amount.unit === 'g' || amount.unit === 'l') {
       sample.components[componentIndex].setAmount(amount, totalVolume);
+    } else if (amount.unit === 'mol') {
+      sample.components[componentIndex].setMol(amount, totalVolume);
     } else if (amount.unit === 'mol/l') {
       sample.components[componentIndex].setConc(amount, totalVolume, concType, updateVolume);
     }

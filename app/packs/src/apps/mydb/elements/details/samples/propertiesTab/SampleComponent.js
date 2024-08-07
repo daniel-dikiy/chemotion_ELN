@@ -94,7 +94,7 @@ class SampleComponent extends Component {
         materialGroup: this.props.materialGroup,
         sampleID: this.componentId(),
         concType,
-        updateVolume: lockColumn,
+        updateVolume: !lockColumn,
 
       };
       this.props.onChange(event);

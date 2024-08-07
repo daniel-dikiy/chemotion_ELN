@@ -42,11 +42,47 @@ export default class Component extends Sample {
   }
 
   setAmount(amount, totalVolume) {
-    if (!amount.unit || isNaN(amount.value)) { return; }
+    if (!amount.unit || Number.isNaN(amount.value)) {
+      return;
+    }
     if (this.density && this.density > 0 && this.material_group !== 'solid') {
       this.setAmountDensity(amount, totalVolume);
     } else {
       this.setAmountConc(amount, totalVolume);
+    }
+  }
+
+  // refactor this part
+  setMol(amount, totalVolume) {
+    if (Number.isNaN(amount.value) || amount.unit !== 'mol') return;
+
+    this.amount_mol = amount.value;
+    const purity = this.purity || 1.0;
+
+    if (this.density && this.density > 0 && this.material_group === 'liquid') {
+      // update density
+      this.starting_molarity_value = 0;
+
+      this.amount_g = (this.amount_mol * this.molecule_molecular_weight) / this.purity;
+
+      if (totalVolume && totalVolume > 0) {
+        const concentration = this.amount_mol / (totalVolume * purity);
+        this.molarity_value = concentration;
+        this.concn = concentration;
+      }
+    } else if (this.material_group === 'solid') {
+      // update concentrations
+      if (this.amount_l === 0 || this.amount_g === 0) {
+        this.molarity_value = 0;
+        this.concn = 0;
+      } else if (totalVolume && totalVolume > 0) {
+        const concentration = this.amount_mol / (totalVolume * purity);
+
+        this.concn = concentration;
+        this.molarity_value = concentration;
+
+        this.molarity_unit = 'M';
+      }
     }
   }
 
@@ -65,7 +101,9 @@ export default class Component extends Sample {
     const purity = this.purity || 1.0;
     if (amount.unit === 'l') {
       this.amount_l = amount.value;
-      this.amount_mol = this.starting_molarity_value * this.amount_l * purity;
+      if (this.starting_molarity_value) {
+        this.amount_mol = this.starting_molarity_value * this.amount_l * purity;
+      }
       this.concn = this.molarity_value = this.amount_mol / (totalVolume * purity);
       this.molarity_unit = 'M';
     } else if (amount.unit === 'g') {
@@ -179,6 +217,11 @@ export default class Component extends Sample {
       this.purity = purity;
       this.amount_mol = this.molarity_value * totalVolume * this.purity;
     }
+  }
+
+  get svgPath() {
+    return this.molecule && this.molecule.molecule_svg_file
+      ? `/images/molecules/${this.molecule.molecule_svg_file}` : '';
   }
 
   serializeComponent() {
