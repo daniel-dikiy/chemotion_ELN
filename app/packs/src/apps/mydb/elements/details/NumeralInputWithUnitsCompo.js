@@ -137,7 +137,7 @@ export default class NumeralInputWithUnitsCompo extends Component {
 
   render() {
     const {
-      bsSize, bsStyle, disabled, label, unit, name, showInfoTooltip
+      bsSize, bsStyle, disabled, label, unit, name, showInfoTooltipTotalVol
     } = this.props;
     const {
       showString, value, metricPrefix,
@@ -175,7 +175,7 @@ export default class NumeralInputWithUnitsCompo extends Component {
       return (
         <div className={`numeric-input-unit_${this.props.unit}`}>
           {labelWrap}
-          {showInfoTooltip && (
+          {showInfoTooltipTotalVol && (
             <OverlayTrigger
               placement="top"
               overlay={(
@@ -184,8 +184,8 @@ export default class NumeralInputWithUnitsCompo extends Component {
                 </Tooltip>
               )}
             >
-              <ControlLabel style={{ marginLeft: '5px' }}>
-                <span className="glyphicon glyphicon-info-sign" />
+              <ControlLabel style={{ marginLeft: '5px', cursor: 'pointer' }}>
+                <span style={{ cursor: 'pointer' }} className="glyphicon glyphicon-info-sign" />
               </ControlLabel>
             </OverlayTrigger>
           )}
@@ -245,7 +245,7 @@ NumeralInputWithUnitsCompo.propTypes = {
   bsSize: PropTypes.string,
   bsStyle: PropTypes.string,
   name: PropTypes.string,
-  showInfoTooltip: PropTypes.bool,
+  showInfoTooltipTotalVol: PropTypes.bool,
 };
 
 NumeralInputWithUnitsCompo.defaultProps = {
@@ -257,5 +257,5 @@ NumeralInputWithUnitsCompo.defaultProps = {
   bsSize: 'small',
   bsStyle: 'default',
   name: '',
-  showInfoTooltip: false,
+  showInfoTooltipTotalVol: false,
 };

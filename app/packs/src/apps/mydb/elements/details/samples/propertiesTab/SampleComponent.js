@@ -314,7 +314,10 @@ class SampleComponent extends Component {
   }
 
   componentConc(material, metricMolConc, metricPrefixesMolConc) {
-    const lockColumn = this.props.materialGroup === 'liquid' ? this.props.lockAmountColumn : this.props.lockAmountColumnSolids;
+    const {
+      materialGroup, lockAmountColumn, lockAmountColumnSolids, sample
+    } = this.props;
+    const lockColumn = materialGroup === 'liquid' ? lockAmountColumn : lockAmountColumnSolids;
     return (
       <td style={{ verticalAlign: 'top' }}>
         <NumeralInputWithUnitsCompo
@@ -324,7 +327,7 @@ class SampleComponent extends Component {
           metricPrefix={metricMolConc}
           metricPrefixes={metricPrefixesMolConc}
           precision={4}
-          disabled={!permitOn(this.props.sample) || !lockColumn}
+          disabled={!permitOn(sample) || !lockColumn}
           onChange={(e) => this.handleAmountChange(e, material.concn, 'targetConc', lockColumn)}
           onMetricsChange={this.handleMetricsChange}
         />
@@ -594,5 +597,6 @@ SampleComponent.propTypes = {
   isDragging: PropTypes.bool,
   canDrop: PropTypes.bool,
   isOver: PropTypes.bool,
-  lockAmountColumn: PropTypes.bool.isRequired
+  lockAmountColumn: PropTypes.bool.isRequired,
+  lockAmountColumnSolids: PropTypes.bool.isRequired,
 };

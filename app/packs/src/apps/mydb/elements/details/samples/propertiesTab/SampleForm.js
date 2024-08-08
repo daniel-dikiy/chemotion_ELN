@@ -441,7 +441,7 @@ export default class SampleForm extends React.Component {
     title = '',
     block = false,
     notApplicable = false,
-    showInfoTooltip = false
+    showInfoTooltipTotalVol = false
   ) {
     if (sample.contains_residues && unit === 'l') return false;
     const value = !isNaN(sample[field]) ? sample[field] : null;
@@ -498,7 +498,7 @@ export default class SampleForm extends React.Component {
           onChange={(e) => this.handleFieldChanged(field, e)}
           onMetricsChange={(e) => this.handleMetricsChange(e)}
           id={`numInput_${field}`}
-          showInfoTooltip={showInfoTooltip}
+          showInfoTooltipTotalVol={showInfoTooltipTotalVol}
         />
       </td>
     );
