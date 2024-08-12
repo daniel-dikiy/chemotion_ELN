@@ -10,7 +10,7 @@ import SampleComponent from 'src/apps/mydb/elements/details/samples/propertiesTa
 const SampleComponentsGroup = ({
   materialGroup, deleteMixtureComponent, onChange, sample,
   headIndex, dropSample, dropMaterial, lockAmountColumn, lockAmountColumnSolids, switchAmount, sampleComponents,
-  showModalWithMaterial, activeTab, handleTabSelect
+  showModalWithMaterial, activeTab, handleTabSelect, enableComponentLabel, enableComponentPurity
 }) => {
   const contents = [];
   if (sampleComponents && sampleComponents.length > 0) {
@@ -39,6 +39,8 @@ const SampleComponentsGroup = ({
           showModalWithMaterial={showModalWithMaterial}
           activeTab={activeTab}
           handleTabSelect={handleTabSelect}
+          enableComponentLabel={enableComponentLabel}
+          enableComponentPurity={enableComponentPurity}
         />
       ));
     });
@@ -49,7 +51,7 @@ const SampleComponentsGroup = ({
     amount: 'Amount',
     mass: 'Mass',
     volume: 'Volume',
-    startingConc: 'Starting conc.',
+    startingConc: 'Stock',
     concn: 'Total Conc.',
     eq: 'Ratio',
     ref: 'Ref',
@@ -88,64 +90,67 @@ const SampleComponentsGroup = ({
         <colgroup>
           <col style={{ width: '4%' }} />
           <col style={{ width: '7%' }} />
-          <col style={{ width: '7%' }} />
-          <col style={{ width: '3%' }} />
-          <col style={{ width: '15%' }} />
-          <col style={{ width: '15%' }} />
-          <col style={{ width: '15%' }} />
-          <col style={{ width: '15%' }} />
-          <col style={{ width: '7.5%' }} />
-          <col style={{ width: '7.5%' }} />
           <col style={{ width: '4%' }} />
+          <col style={{ width: '10%' }} />
+          <col style={{ width: '10%' }} />
+          <col style={{ width: '10%' }} />
+          <col style={{ width: '10%' }} />
+          <col style={{ width: '6%' }} />
+          <col style={{ width: '2%' }} />
+          <col style={{ width: '10%' }} />
+          {enableComponentLabel && <col style={{ width: '4%' }} />}
+          {enableComponentPurity && <col style={{ width: '4%' }} />}
         </colgroup>
         <thead>
-          <tr>
-            <th />
-            <th>{headers.group}</th>
-            <th>{headers.name}</th>
-            <th>{headers.ref}</th>
-            {materialGroup === 'solid' && (
-              <th style={{ padding: '3px 3px' }}>
-                {SwitchAmountButton(lockAmountColumnSolids, switchAmount, materialGroup)} {headers.mass}
-              </th>
-            )}
-            {materialGroup === 'liquid' && (
-              <th>
-                {SwitchAmountButton(lockAmountColumn, switchAmount, materialGroup)} {headers.volume}
-              </th>
-            )}
-            <th>{headers.amount}</th>
-            {materialGroup === 'liquid' && (
-              <th>
-                <Tabs
-                  onSelect={handleTabSelect}
-                  id="material-tabs"
-                >
-                  <Tab eventKey="concentration" title="Starting Conc" />
-                  <Tab eventKey="density" title="Density" />
-                </Tabs>
-                <th />
-              </th>
-            )}
-            {materialGroup === 'solid' && <th>{headers.density}</th>}
-            <th>
-              {headers.concn}
-              <OverlayTrigger
-                placement="top"
-                overlay={(
-                  <Tooltip id="info-total-conc">
-                    Total Conc. will only be calculated when we have a Total volume
-                  </Tooltip>
-                )}
-              >
-                <ControlLabel style={{ marginLeft: '5px' }}>
-                  <span className="glyphicon glyphicon-info-sign" />
-                </ControlLabel>
-              </OverlayTrigger>
+        <tr>
+          <th/>
+          <th>{headers.group}</th>
+          <th/>
+          {materialGroup === 'solid' && (
+            <th style={{ padding: '3px 3px' }}>
+              {SwitchAmountButton(lockAmountColumnSolids, switchAmount, materialGroup)} {headers.mass}
             </th>
-            <th>{headers.purity}</th>
-            <th>{headers.eq}</th>
-          </tr>
+          )}
+
+          {materialGroup === 'liquid' && (
+            <th>
+              {headers.startingConc}
+            </th>
+          )}
+          {materialGroup === 'liquid' && (
+            <th>
+              {headers.density}
+            </th>
+          )}
+
+          {materialGroup === 'liquid' && (
+            <th>
+              {SwitchAmountButton(lockAmountColumn, switchAmount, materialGroup)} {headers.volume}
+            </th>
+          )}
+          <th>{headers.amount}</th>
+
+          {materialGroup === 'solid' && <th>{headers.density}</th>}
+          <th>{headers.eq}</th>
+          <th>{headers.ref}</th>
+          <th>
+            {headers.concn}
+            <OverlayTrigger
+              placement="top"
+              overlay={(
+                <Tooltip id="info-total-conc">
+                  Total Conc. will only be calculated when we have a Total volume
+                </Tooltip>
+              )}
+            >
+              <ControlLabel style={{ marginLeft: '5px' }}>
+                <span style={{ cursor: 'pointer' }} className="glyphicon glyphicon-info-sign" />
+              </ControlLabel>
+            </OverlayTrigger>
+          </th>
+          {enableComponentLabel && <th>{headers.name}</th>}
+          {enableComponentPurity && <th>{headers.purity}</th>}
+        </tr>
         </thead>
         <tbody>
           {contents.map((item) => item)}
@@ -166,11 +171,13 @@ SampleComponentsGroup.propTypes = {
   switchAmount: PropTypes.func.isRequired,
   lockAmountColumn: PropTypes.bool,
   lockAmountColumnSolids: PropTypes.bool,
+  enableComponentLabel: PropTypes.bool.isRequired,
+  enableComponentPurity: PropTypes.bool.isRequired,
 };
 
 SampleComponentsGroup.defaultProps = {
   lockAmountColumn: false,
-  lockAmountColumnSolids: false
+  lockAmountColumnSolids: false,
 };
 
 export default SampleComponentsGroup;

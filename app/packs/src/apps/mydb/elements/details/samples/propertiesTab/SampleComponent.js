@@ -15,6 +15,7 @@ import NumeralInputWithUnitsCompo from 'src/apps/mydb/elements/details/NumeralIn
 import Sample from 'src/models/Sample';
 import { permitCls, permitOn } from 'src/components/common/uis';
 import SvgWithPopover from 'src/components/common/SvgWithPopover';
+import SampleForm from "./SampleForm";
 
 const matSource = {
   beginDrag(props) {
@@ -172,7 +173,7 @@ class SampleComponent extends Component {
     return (
       <div style={{ display: 'inline-block', maxWidth: '100%' }}>
         <span style={iupacStyle}>
-           {this.svgPreview(material, moleculeIupacName)}
+          {this.svgPreview(material, moleculeIupacName)}
         </span>
       </div>
     );
@@ -244,25 +245,29 @@ class SampleComponent extends Component {
 
   materialVolume(material) {
     if (material.contains_residues) { return notApplicableInput(); }
+
+    const {
+      sample, lockAmountColumn, enableComponentLabel, enableComponentPurity
+    } = this.props;
     const metricPrefixes = ['m', 'n', 'u'];
     const metric = (material.metrics && material.metrics.length > 2 && metricPrefixes.indexOf(material.metrics[1]) > -1) ? material.metrics[1] : 'm';
 
     return (
-      <td>
-        <div>
-          <NumeralInputWithUnitsCompo
-            key={material.id}
-            value={material.amount_l}
-            unit="l"
-            metricPrefix={metric}
-            metricPrefixes={metricPrefixes}
-            precision={3}
-            disabled={!permitOn(this.props.sample) || this.props.lockAmountColumn}
-            onChange={(e) => this.handleAmountChange(e, material.amount_l)}
-            onMetricsChange={this.handleMetricsChange}
-            bsStyle={material.amount_unit === 'l' ? 'success' : 'default'}
-          />
-        </div>
+      <td
+        style={enableComponentLabel === false && enableComponentPurity === false ? { verticalAlign: 'bottom' } : null}
+      >
+        <NumeralInputWithUnitsCompo
+          key={material.id}
+          value={material.amount_l}
+          unit="l"
+          metricPrefix={metric}
+          metricPrefixes={metricPrefixes}
+          precision={3}
+          disabled={!permitOn(sample) || lockAmountColumn}
+          onChange={(e) => this.handleAmountChange(e, material.amount_l)}
+          onMetricsChange={this.handleMetricsChange}
+          bsStyle={material.amount_unit === 'l' ? 'success' : 'default'}
+        />
       </td>
     );
   }
@@ -296,20 +301,28 @@ class SampleComponent extends Component {
   }
 
   componentMol(material, metricMol, metricPrefixesMol) {
-    const lockColumn = this.props.materialGroup === 'liquid' ? this.props.lockAmountColumn : this.props.lockAmountColumnSolids;
+    const {
+      sample, materialGroup, lockAmountColumn, lockAmountColumnSolids, enableComponentLabel, enableComponentPurity
+    } = this.props;
+    const lockColumn = materialGroup === 'liquid' ? lockAmountColumn : lockAmountColumnSolids;
+
     return (
-      <NumeralInputWithUnitsCompo
-        key={material.id}
-        value={material.amount_mol}
-        unit="mol"
-        metricPrefix={metricMol}
-        metricPrefixes={metricPrefixesMol}
-        precision={4}
-        disabled={!permitOn(this.props.sample) || lockColumn}
-        onChange={(e) => this.handleAmountChange(e, material.amount_mol)}
-        onMetricsChange={this.handleMetricsChange}
-        bsStyle={material.amount_unit === 'mol' ? 'success' : 'default'}
-      />
+      <td
+        style={enableComponentLabel === false && enableComponentPurity === false ? { verticalAlign: 'bottom' } : null}
+      >
+        <NumeralInputWithUnitsCompo
+          key={material.id}
+          value={material.amount_mol}
+          unit="mol"
+          metricPrefix={metricMol}
+          metricPrefixes={metricPrefixesMol}
+          precision={4}
+          disabled={!permitOn(sample) || lockColumn}
+          onChange={(e) => this.handleAmountChange(e, material.amount_mol)}
+          onMetricsChange={this.handleMetricsChange}
+          bsStyle={material.amount_unit === 'mol' ? 'success' : 'default'}
+        />
+      </td>
     );
   }
 
@@ -389,7 +402,8 @@ class SampleComponent extends Component {
 
   mixtureComponent(props, style) {
     const {
-      sample, material, deleteMaterial, connectDragSource, connectDropTarget, activeTab
+      sample, material, deleteMaterial, connectDragSource, connectDropTarget, activeTab,
+      enableComponentLabel, enableComponentPurity
     } = props;
     const metricPrefixes = ['m', 'n', 'u'];
     const metricPrefixesMol = ['m', 'n'];
@@ -410,41 +424,6 @@ class SampleComponent extends Component {
           {this.materialNameWithIupac(material)}
         </td>
 
-        <td>
-          {this.nameInput(material)}
-        </td>
-
-        {this.materialRef(material)}
-
-        {this.materialVolume(material)}
-
-        <td>
-          {this.componentMol(material, metricMol, metricPrefixesMol)}
-        </td>
-
-        {activeTab === 'concentration' && this.componentStartingConc(material, metricMolConc, metricPrefixesMolConc)}
-        {activeTab === 'density' && this.componentDensity(material)}
-
-        {this.componentConc(material, metricMolConc, metricPrefixesMolConc)}
-
-        <td style={{ verticalAlign: 'top' }}>
-          <NumeralInputWithUnitsCompo
-            precision={4}
-            value={material.purity}
-            disabled={!permitOn(this.props.sample)}
-            onChange={(e) => this.handlePurityChange(e, material.purity)}
-          />
-        </td>
-
-        <td style={{ verticalAlign: 'top' }}>
-          <NumeralInputWithUnitsCompo
-            precision={4}
-            value={material.equivalent}
-            disabled={!permitOn(this.props.sample) || material.reference}
-            onChange={(e) => this.handleRatioChange(e, material.equivalent)}
-          />
-        </td>
-
         <td style={{ verticalAlign: 'top' }}>
           <Button
             disabled={!permitOn(sample)}
@@ -455,6 +434,48 @@ class SampleComponent extends Component {
             <i className="fa fa-trash-o" />
           </Button>
         </td>
+
+        {this.componentStartingConc(material, metricMolConc, metricPrefixesMolConc)}
+
+        {this.componentDensity(material)}
+
+        {this.materialVolume(material)}
+
+        {this.componentMol(material, metricMol, metricPrefixesMol)}
+
+        <td style={{ verticalAlign: 'top' }}>
+          <NumeralInputWithUnitsCompo
+            precision={4}
+            value={material.equivalent}
+            disabled={!permitOn(sample) || material.reference}
+            onChange={(e) => this.handleRatioChange(e, material.equivalent)}
+          />
+        </td>
+
+        {this.materialRef(material)}
+
+        {this.componentConc(material, metricMolConc, metricPrefixesMolConc)}
+
+        {
+          enableComponentLabel && (
+            <td>
+              {this.nameInput(material)}
+            </td>
+          )
+        }
+
+        {
+          enableComponentPurity && (
+            <td style={{ verticalAlign: 'top' }}>
+              <NumeralInputWithUnitsCompo
+                precision={4}
+                value={material.purity}
+                disabled={!permitOn(sample)}
+                onChange={(e) => this.handlePurityChange(e, material.purity)}
+              />
+            </td>
+          )
+        }
       </tr>
     );
   }
@@ -482,10 +503,6 @@ class SampleComponent extends Component {
 
         <td style={{ width: '10%', maxWidth: '50px' }}>
           {this.materialNameWithIupac(material)}
-        </td>
-
-        <td>
-          {this.nameInput(material)}
         </td>
 
         {this.materialRef(material)}
@@ -599,4 +616,6 @@ SampleComponent.propTypes = {
   isOver: PropTypes.bool,
   lockAmountColumn: PropTypes.bool.isRequired,
   lockAmountColumnSolids: PropTypes.bool.isRequired,
+  enableComponentLabel: PropTypes.bool.isRequired,
+  enableComponentPurity: PropTypes.bool.isRequired,
 };

@@ -318,7 +318,7 @@ export default class SampleDetailsComponents extends React.Component {
 
   render() {
     const {
-      sample, isOver, canDrop
+      sample, isOver, canDrop, enableComponentLabel, enableComponentPurity
     } = this.props;
     const style = {
       padding: '2px 5px',
@@ -360,6 +360,8 @@ export default class SampleDetailsComponents extends React.Component {
             showModalWithMaterial={this.showModalWithMaterial}
             handleTabSelect={this.handleTabSelect}
             activeTab={this.state.activeTab}
+            enableComponentLabel={enableComponentLabel}
+            enableComponentPurity={enableComponentPurity}
           />
         </ListGroupItem>
         <ListGroupItem style={minPadding}>
@@ -389,9 +391,6 @@ SampleDetailsComponents.propTypes = {
   onChange: PropTypes.func.isRequired,
   isOver: PropTypes.bool.isRequired,
   canDrop: PropTypes.bool.isRequired,
-};
-
-SampleDetailsComponents.defaultProps = {
-  canDrop: true,
-  isOver: false
+  enableComponentLabel: PropTypes.bool.isRequired,
+  enableComponentPurity: PropTypes.bool.isRequired,
 };
