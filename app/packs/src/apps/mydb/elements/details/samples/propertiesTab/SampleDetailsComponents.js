@@ -20,7 +20,7 @@ export default class SampleDetailsComponents extends React.Component {
       showModal: false,
       droppedMaterial: null,
       activeTab: 'concentration',
-      lockAmountColumn: false,
+      lockAmountColumn: true,
       lockAmountColumnSolids: false,
     };
 
@@ -102,34 +102,37 @@ export default class SampleDetailsComponents extends React.Component {
 
   updatedSampleForAmountUnitChange(changeEvent) {
     const { sample } = this.props;
-    const {sampleID, amount, concType, updateVolume} = changeEvent;
-    const componentIndex = this.props.sample.components.findIndex(
+    const { sampleID, amount, concType, lockColumn } = changeEvent;
+    const componentIndex = sample.components.findIndex(
       (component) => component.id === sampleID
     );
 
     const totalVolume = sample.amount_l;
 
     if (amount.unit === 'g' || amount.unit === 'l') {
-      sample.components[componentIndex].setAmount(amount, totalVolume);
+      sample.components[componentIndex].handleVolumeChange(amount, totalVolume); // volume given, update amount
     } else if (amount.unit === 'mol') {
-      sample.components[componentIndex].setMol(amount, totalVolume);
+      sample.components[componentIndex].handleAmountChange(amount, totalVolume); // amount given, update volume
     } else if (amount.unit === 'mol/l') {
-      sample.components[componentIndex].setConc(amount, totalVolume, concType, updateVolume);
+      sample.components[componentIndex].setConc(amount, totalVolume, concType, lockColumn); // starting conc. given,
     }
+
     // update components ratio
     sample.updateMixtureComponentEquivalent();
   }
 
   updateDensity(changeEvent) {
     const { sample } = this.props;
-    const { sampleID, amount, updateVolume } = changeEvent;
-    const componentIndex = this.props.sample.components.findIndex(
+    const { sampleID, amount, lockColumn } = changeEvent;
+    const componentIndex = sample.components.findIndex(
       (component) => component.id === sampleID
     );
 
     const totalVolume = sample.amount_l;
 
-    sample.components[componentIndex].setDensity(amount, updateVolume, totalVolume);
+    sample.components[componentIndex].handleDensityChange(amount, lockColumn, totalVolume);
+    // sample.components[componentIndex].setDensity(amount, lockColumn, totalVolume);
+
     // update components ratio
     sample.updateMixtureComponentEquivalent();
   }

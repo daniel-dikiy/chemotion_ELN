@@ -933,24 +933,32 @@ export default class SampleForm extends React.Component {
               )}
             </ListGroupItem>
           </ListGroup>
-          <tr>
-            <ControlLabel>Mixture Components:</ControlLabel>
-          </tr>
-          <tr style={{ float: 'right' }}>
-            <td style={{ width: '10%', paddingRight: '15px' }}>
-              {selectedSampleType === 'Mixture' ? this.totalAmount(sample) : null}
-            </td>
-          </tr>
-          {selectedSampleType === 'Mixture' ? this.mixtureComponentsList(sample) : null}
-          <tr>
-            <div style={{
-              display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '10px'
-            }}
-            >
-              {this.renderCheckbox('enableComponentLabel', 'Enable Label', 'enable-component-label')}
-              {this.renderCheckbox('enableComponentPurity', 'Enable Purity', 'enable-component-purity')}
-            </div>
-          </tr>
+          {selectedSampleType === 'Mixture' && (
+            <>
+              <tr>
+                <ControlLabel>Mixture Components:</ControlLabel>
+              </tr>
+
+              <tr style={{ float: 'right' }}>
+                <td style={{ width: '10%', paddingRight: '15px' }}>
+                  {this.totalAmount(sample)}
+                </td>
+              </tr>
+
+              {this.mixtureComponentsList(sample)}
+
+              <tr>
+                <td>
+                  <div style={{
+                    display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '10px'
+                  }}>
+                    {this.renderCheckbox('enableComponentLabel', 'Enable Label', 'enable-component-label')}
+                    {this.renderCheckbox('enableComponentPurity', 'Enable Purity', 'enable-component-purity')}
+                  </div>
+                </td>
+              </tr>
+            </>
+          )}
           <tr>
             <td colSpan="4">
               <SampleDetailsSolvents

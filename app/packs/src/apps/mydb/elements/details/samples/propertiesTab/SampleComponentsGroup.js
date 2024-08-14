@@ -67,13 +67,19 @@ const SampleComponentsGroup = ({
 
   const switchAmountTooltip = () => (
     <Tooltip id="assign_button">
-      Lock/unlock amounts <br /> (mass/volume/mol)
+      <span style={{ display: 'block' }}>
+        Lock/unlock amounts
+      </span>
+      <span style={{ display: 'block' }}>
+        (mass/stock/density)
+      </span>
     </Tooltip>
   );
 
   const SwitchAmountButton = (lockAmountColumn, switchAmount, materialGroup) => (
     <OverlayTrigger placement="top" overlay={switchAmountTooltip()}>
       <Button
+        style={{ marginRight: '5px' }}
         id="lock_amount_column_btn"
         bsSize="xsmall"
         bsStyle={lockAmountColumn ? 'warning' : 'default'}
@@ -91,13 +97,12 @@ const SampleComponentsGroup = ({
           <col style={{ width: '4%' }} />
           <col style={{ width: '7%' }} />
           <col style={{ width: '4%' }} />
-          <col style={{ width: '10%' }} />
-          <col style={{ width: '10%' }} />
-          <col style={{ width: '10%' }} />
-          <col style={{ width: '10%' }} />
-          <col style={{ width: '6%' }} />
-          <col style={{ width: '2%' }} />
-          <col style={{ width: '10%' }} />
+          <col style={{ width: '14%' }} />
+          <col style={{ width: '14%' }} />
+          <col style={{ width: '14%' }} />
+          <col style={{ width: '8%' }} />
+          <col style={{ width: '4%' }} />
+          <col style={{ width: '14%' }} />
           {enableComponentLabel && <col style={{ width: '4%' }} />}
           {enableComponentPurity && <col style={{ width: '4%' }} />}
         </colgroup>
@@ -114,18 +119,22 @@ const SampleComponentsGroup = ({
 
           {materialGroup === 'liquid' && (
             <th>
-              {headers.startingConc}
-            </th>
-          )}
-          {materialGroup === 'liquid' && (
-            <th>
-              {headers.density}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Tabs
+                  onSelect={handleTabSelect}
+                  id="material-tabs"
+                >
+                  <Tab eventKey="concentration" title="Stock" />
+                  <Tab eventKey="density" title="Density" />
+                </Tabs>
+                {SwitchAmountButton(lockAmountColumn, switchAmount, materialGroup)}
+              </div>
             </th>
           )}
 
           {materialGroup === 'liquid' && (
             <th>
-              {SwitchAmountButton(lockAmountColumn, switchAmount, materialGroup)} {headers.volume}
+              {headers.volume}
             </th>
           )}
           <th>{headers.amount}</th>
@@ -169,15 +178,10 @@ SampleComponentsGroup.propTypes = {
   dropSample: PropTypes.func.isRequired,
   dropMaterial: PropTypes.func.isRequired,
   switchAmount: PropTypes.func.isRequired,
-  lockAmountColumn: PropTypes.bool,
-  lockAmountColumnSolids: PropTypes.bool,
+  lockAmountColumn: PropTypes.bool.isRequired,
+  lockAmountColumnSolids: PropTypes.bool.isRequired,
   enableComponentLabel: PropTypes.bool.isRequired,
   enableComponentPurity: PropTypes.bool.isRequired,
-};
-
-SampleComponentsGroup.defaultProps = {
-  lockAmountColumn: false,
-  lockAmountColumnSolids: false,
 };
 
 export default SampleComponentsGroup;
