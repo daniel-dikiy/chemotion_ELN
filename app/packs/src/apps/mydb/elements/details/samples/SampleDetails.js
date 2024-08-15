@@ -78,6 +78,8 @@ import { formatTimeStampsOfElement } from 'src/utilities/timezoneHelper';
 import { commentActivation } from 'src/utilities/CommentHelper';
 import StructureEditor from 'src/models/StructureEditor';
 import IndigoServiceFetcher from 'src/fetchers/InidigoFetcher';
+import PrivateNoteElement from 'src/apps/mydb/elements/details/PrivateNoteElement';
+
 
 const MWPrecision = 6;
 
@@ -838,9 +840,15 @@ export default class SampleDetails extends React.Component {
             decoupleMolecule={this.decoupleMolecule}
           />
         </ListGroupItem>
-        <EditUserLabels element={sample} />
-        {this.elementalPropertiesItem(sample)}
         {this.chemicalIdentifiersItem(sample)}
+        <div style={{ marginTop: '10px' }}>
+          <EditUserLabels element={sample} />
+        </div>
+        {this.elementalPropertiesItem(sample)}
+        <div style={{marginTop: '10px'}}>
+          <PrivateNoteElement element={sample} disabled={!sample.can_update} />
+        </div>
+        
       </Tab>
     );
   }
