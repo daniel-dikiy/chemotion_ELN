@@ -497,7 +497,7 @@ export default class SampleDetails extends React.Component {
   }
 
   sampleInventoryTab(ind) {
-    const sample = this.state.sample || {};
+    const { sample } = this.state;
     const { saveInventoryAction } = this.state;
 
     return (
@@ -560,7 +560,7 @@ export default class SampleDetails extends React.Component {
   }
 
   sampleImportReadoutTab(ind) {
-    const sample = this.state.sample || {};
+    const { sample } = this.state;
     return (
       <Tab
         eventKey={ind}
@@ -588,7 +588,7 @@ export default class SampleDetails extends React.Component {
   }
 
   measurementsTab(index) {
-    const sample = this.state.sample || {};
+    const { sample } = this.state;
 
     return (
       <Tab
@@ -599,6 +599,19 @@ export default class SampleDetails extends React.Component {
         <ListGroupItem style={{ paddingBottom: 20 }}>
           <MeasurementsTab sample={sample} />
         </ListGroupItem>
+      </Tab>
+    );
+  }
+
+  versioningTab(index) {
+    const { sample } = this.state;
+    return (
+      <Tab
+        eventKey={index}
+        title="Versions"
+        key={`Version_Sample_${sample.id.toString()}`}
+      >
+        {sample.log_data}
       </Tab>
     );
   }
@@ -819,7 +832,7 @@ export default class SampleDetails extends React.Component {
   }
 
   samplePropertiesTab(ind) {
-    const sample = this.state.sample || {};
+    const { sample } = this.state;
 
     return (
       <Tab eventKey={ind} title="Properties" key={`Props${sample.id.toString()}`}>
@@ -1436,7 +1449,7 @@ export default class SampleDetails extends React.Component {
   }
 
   render() {
-    const sample = this.state.sample || {};
+    const { sample } = this.state;
     const { visible, isChemicalEdited } = this.state;
     const tabContentsMap = {
       properties: this.samplePropertiesTab('properties'),
@@ -1444,7 +1457,8 @@ export default class SampleDetails extends React.Component {
       references: this.sampleLiteratureTab(),
       results: this.sampleImportReadoutTab('results'),
       qc_curation: this.qualityCheckTab('qc_curation'),
-      measurements: this.measurementsTab('measurements')
+      measurements: this.measurementsTab('measurements'),
+      versioning: this.versioningTab('versioning')
     };
 
     if (this.enableComputedProps) {
