@@ -114,6 +114,17 @@ export default class Component extends Sample {
     }
   }
 
+  setMolarityDensity(amount, totalVolume) {
+    const purity = this.purity || 1.0;
+    this.molarity_value = this.concn = amount.value;
+    this.molarity_unit = amount.unit;
+    this.starting_molarity_value = 0;
+
+    this.amount_mol = this.molarity_value * totalVolume * purity;
+    this.amount_g = (this.molecule_molecular_weight * this.amount_mol) / purity;
+    this.amount_l = (this.amount_g / this.density) / 1000;
+  }
+
   handleStockChange(amount, totalVolume, concType, lockColumn) {
     this.setConcentration(amount, concType, lockColumn);
 

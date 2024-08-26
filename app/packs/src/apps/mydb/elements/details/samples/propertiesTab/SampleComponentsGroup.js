@@ -97,7 +97,7 @@ const SampleComponentsGroup = ({
           <col style={{ width: '4%' }} />
           <col style={{ width: '7%' }} />
           <col style={{ width: '4%' }} />
-          <col style={{ width: '14%' }} />
+          <col style={{ width: '17%' }} />
           <col style={{ width: '14%' }} />
           <col style={{ width: '14%' }} />
           <col style={{ width: '8%' }} />
@@ -119,7 +119,8 @@ const SampleComponentsGroup = ({
 
           {materialGroup === 'liquid' && (
             <th>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                {SwitchAmountButton(lockAmountColumn, switchAmount, materialGroup)}
                 <Tabs
                   onSelect={handleTabSelect}
                   id="material-tabs"
@@ -127,7 +128,6 @@ const SampleComponentsGroup = ({
                   <Tab eventKey="concentration" title="Stock" />
                   <Tab eventKey="density" title="Density" />
                 </Tabs>
-                {SwitchAmountButton(lockAmountColumn, switchAmount, materialGroup)}
               </div>
             </th>
           )}
