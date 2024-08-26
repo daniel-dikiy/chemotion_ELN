@@ -3,13 +3,13 @@
 /* eslint-disable react/forbid-prop-types */
 /* eslint-disable no-param-reassign */
 import React from 'react';
-import PropTypes from 'prop-types';
+import PropTypes, { object } from 'prop-types';
 import {
   Button, ButtonToolbar,
   InputGroup, FormGroup, FormControl,
   Panel, ListGroup, ListGroupItem, Glyphicon, Tabs, Tab, Row, Col,
   Tooltip, OverlayTrigger,
-  ControlLabel, Modal, Alert, Checkbox
+  ControlLabel, Modal, Alert, Checkbox, Table
 } from 'react-bootstrap';
 import SVG from 'react-inlinesvg';
 import Clipboard from 'clipboard';
@@ -605,13 +605,31 @@ export default class SampleDetails extends React.Component {
 
   versioningTab(index) {
     const { sample } = this.state;
+    const logData = JSON.parse(sample.log_data);
+
     return (
       <Tab
         eventKey={index}
         title="Versions"
         key={`Version_Sample_${sample.id.toString()}`}
       >
-        {sample.log_data}
+        <Table>
+          <tbody className="versions-table">
+            <tr>
+              <th>param name</th>
+              <th>old param value</th>
+              <th>new param value</th>
+            </tr>
+            {Object.keys(logData.changes).map((key) => (
+              <tr key="paramChanges">
+                <td>{key}</td>
+                <td>{JSON.stringify(logData.changes[key].old)}</td>
+                <td>{JSON.stringify(logData.changes[key].new)}</td>
+              </tr>
+            ))}
+
+          </tbody>
+        </Table>
       </Tab>
     );
   }
