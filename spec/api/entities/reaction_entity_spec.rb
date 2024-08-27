@@ -216,6 +216,8 @@ describe Entities::ReactionEntity do
           timestamp_stop: reaction.timestamp_stop,
           tlc_description: reaction.tlc_description,
           tlc_solvents: reaction.tlc_solvents,
+          vessel_size: reaction.vessel_size,
+          gaseous: reaction.gaseous,
         )
       end
 
@@ -301,6 +303,8 @@ describe Entities::ReactionEntity do
           tlc_description: '***',
           tlc_solvents: '***',
           variations: [],
+          vessel_size: '***',
+          gaseous: '***',
         )
       end
 

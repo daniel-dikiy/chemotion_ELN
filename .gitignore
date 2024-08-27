@@ -6,6 +6,9 @@
 
 # vscode settings
 .vscode/settings.json
+.vscode/launch.json
+.vscode/tasks.json
+
 
 # Ignore bundler config.
 /.bundle
@@ -91,6 +94,8 @@
 !/public/editors/.keep
 /public/favicon.ico
 
+/public/klasses.json
+
 /public/ontologies/*
 !/public/ontologies/.keep
 !/public/ontologies/chmo.default.edited.json
@@ -99,7 +104,11 @@
 !/public/ontologies/rxno.default.json
 !/public/ontologies/rxno.default.edited.json
 
+/public/jsmol/*
+!/public/jsmol/.keep
+
 /public/data_type.json
+/public/default_editors
 
 /uploads/*
 !/public/attachments/.keep
@@ -205,3 +214,5 @@ public/sprite.png
 
 # generic elements
 data/klasses.json
+
+public/pdf.worker.min.js

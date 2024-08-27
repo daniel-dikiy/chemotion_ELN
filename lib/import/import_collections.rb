@@ -346,6 +346,8 @@ module Import
           'duration',
           'created_at',
           'updated_at',
+          'vessel_size',
+          'gaseous',
         ).merge(
           created_by: @current_user_id,
           collections: fetch_many(
@@ -384,6 +386,8 @@ module Import
             'position',
             'waste',
             'coefficient',
+            'gas_type',
+            'gas_phase_data',
           ).merge(
             reaction: @instances.fetch('Reaction').fetch(fields.fetch('reaction_id')),
             sample: @instances.fetch('Sample').fetch(fields.fetch('sample_id')),
