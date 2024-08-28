@@ -93,6 +93,8 @@ import { validateCas } from 'src/utilities/CasValidation';
 import { commentActivation } from 'src/utilities/CommentHelper';
 import Utils from 'src/utilities/Functions';
 import { formatTimeStampsOfElement } from 'src/utilities/timezoneHelper';
+import MolViewerBtn from 'src/components/viewer/MolViewerBtn';
+import MolViewerSet from 'src/components/viewer/MolViewerSet';
 
 
 const MWPrecision = 6;
@@ -161,6 +163,7 @@ export default class SampleDetails extends React.Component {
     this.enableComputedProps = MatrixCheck(currentUser.matrix, 'computedProp');
     this.enableSampleDecoupled = MatrixCheck(currentUser.matrix, 'sampleDecoupled');
     this.enableNmrSim = MatrixCheck(currentUser.matrix, 'nmrSim');
+    this.enableMoleculeViewer = MatrixCheck(currentUser.matrix, MolViewerSet.PK);
 
     this.onUIStoreChange = this.onUIStoreChange.bind(this);
     this.clipboard = new Clipboard('.clipboardBtn');
@@ -178,6 +181,7 @@ export default class SampleDetails extends React.Component {
     this.handleSegmentsChange = this.handleSegmentsChange.bind(this);
     this.decoupleChanged = this.decoupleChanged.bind(this);
     this.handleFastInput = this.handleFastInput.bind(this);
+    this.matchSelectedCollection = this.matchSelectedCollection.bind(this);
 
     this.handleStructureEditorSave = this.handleStructureEditorSave.bind(this);
     this.handleStructureEditorCancel = this.handleStructureEditorCancel.bind(this);
@@ -364,8 +368,12 @@ export default class SampleDetails extends React.Component {
   }
 
   handleSubmit(closeView = false) {
+    const { currentCollection } = UIStore.getState();
     LoadingActions.start.defer();
     const { sample, validCas } = this.state;
+    if (this.matchSelectedCollection(currentCollection) && sample.xref.inventory_label !== undefined) {
+      sample.collection_id = currentCollection.id;
+    }
     this.checkMolfileChange();
     if (!validCas) {
       sample.xref = { ...sample.xref, cas: '' };
@@ -454,6 +462,17 @@ export default class SampleDetails extends React.Component {
         ...previousState, activeTab: state.sample.activeTab
       }));
     }
+  }
+
+  /* eslint-disable camelcase */
+  matchSelectedCollection(currentCollection) {
+    const { sample } = this.props;
+    if (sample.isNew) {
+      return true;
+    }
+    const { collection_labels } = sample.tag?.taggable_data || [];
+    const result = collection_labels.filter((object) => object.id === currentCollection.id).length > 0;
+    return result;
   }
 
   sampleFooter() {
@@ -854,15 +873,12 @@ export default class SampleDetails extends React.Component {
             decoupleMolecule={this.decoupleMolecule}
           />
         </ListGroupItem>
-        {this.chemicalIdentifiersItem(sample)}
-        <div style={{ marginTop: '10px' }}>
-          <EditUserLabels element={sample} />
-        </div>
+        <EditUserLabels element={sample} fnCb={this.handleSampleChanged} />
         {this.elementalPropertiesItem(sample)}
-        <div style={{ marginTop: '10px' }}>
+        {this.chemicalIdentifiersItem(sample)}
+        <div style={{marginTop: '10px'}}>
           <PrivateNoteElement element={sample} disabled={!sample.can_update} />
         </div>
-
       </Tab>
     );
   }
@@ -1418,35 +1434,37 @@ export default class SampleDetails extends React.Component {
     return (
       sample.can_update
         ? (
-          <div
-            className={className}
-
-          >
+          <>
             <div
+              className={className}
+              style={{ position: 'relative' }}
               onClick={this.showStructureEditor.bind(this)}
-              onKeyPress
+              onKeyPress={this.showStructureEditor.bind(this)}
               role="button"
               tabIndex="0"
             >
-              <Glyphicon className="pull-right ml-5" glyph="pencil" />
+              <Glyphicon className="pull-right" glyph="pencil" />
               <SVG key={svgPath} src={svgPath} className="molecule-mid" />
             </div>
-            {molfileConverstionRequired &&
-              <div
-                className={"file-type-conversion-button"}
-                onClick={this.convertFileContentWithIndigo}
-                onKeyPress
-                role="button"
-                tabIndex="0"
-              >
-                <Glyphicon className="pull-right" glyph="refresh" />
-              </div>
-            }
-          </div>
+            <MolViewerBtn
+              className="structure-editor-container"
+              disabled={sample.isNew || !this.enableMoleculeViewer}
+              fileContent={sample.molfile}
+              isPublic={false}
+              viewType={`mol_${sample.id}`}
+            />
+          </>
         )
         : (
           <div className={"className"}>
             <SVG key={svgPath} src={svgPath} className="molecule-mid" />
+            <MolViewerBtn
+              className="structure-editor-container"
+              disabled={sample.isNew || !this.enableMoleculeViewer}
+              fileContent={sample.molfile}
+              isPublic={false}
+              viewType={`mol_${sample.id}`}
+            />
           </div>
         )
     );
@@ -1543,6 +1561,7 @@ export default class SampleDetails extends React.Component {
     sample.decoupled = e.target.checked;
     if (!sample.decoupled) {
       sample.sum_formula = '';
+      sample.molecular_mass = null;
     } else {
       if (sample.sum_formula?.trim() === '') sample.sum_formula = 'undefined structure';
       if (sample.residues && sample.residues[0] && sample.residues[0].custom_info) {
