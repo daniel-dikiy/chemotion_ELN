@@ -2,83 +2,97 @@
 /* eslint-disable react/destructuring-assignment */
 /* eslint-disable react/forbid-prop-types */
 /* eslint-disable no-param-reassign */
-import React from 'react';
+import classNames from 'classnames';
+import Clipboard from 'clipboard';
+import Immutable from 'immutable';
+import { cloneDeep, findIndex } from 'lodash';
 import PropTypes from 'prop-types';
+import React from 'react';
 import {
+  Alert,
   Button, ButtonToolbar,
-  InputGroup, FormGroup, FormControl,
-  Panel, ListGroup, ListGroupItem, Glyphicon, Tabs, Tab, Row, Col,
-  Tooltip, OverlayTrigger, DropdownButton, MenuItem,
-  ControlLabel, Modal, Alert, Checkbox
+  Checkbox,
+  Col,
+  ControlLabel,
+  DropdownButton,
+  FormControl,
+  FormGroup,
+  Glyphicon,
+  InputGroup,
+  ListGroup, ListGroupItem,
+  MenuItem,
+  Modal,
+  OverlayTrigger,
+  Panel,
+  Row,
+  Tab,
+  Tabs,
+  Tooltip
 } from 'react-bootstrap';
 import SVG from 'react-inlinesvg';
-import Clipboard from 'clipboard';
 import Select from 'react-select';
-import { cloneDeep, findIndex } from 'lodash';
-import uuid from 'uuid';
-import classNames from 'classnames';
-import Immutable from 'immutable';
 import EditorAttrs from 'src/components/structureEditor/StructureEditorSet';
-import ElementActions from 'src/stores/alt/actions/ElementActions';
-import ElementStore from 'src/stores/alt/stores/ElementStore';
 import DetailActions from 'src/stores/alt/actions/DetailActions';
+import ElementActions from 'src/stores/alt/actions/ElementActions';
 import LoadingActions from 'src/stores/alt/actions/LoadingActions';
+import ElementStore from 'src/stores/alt/stores/ElementStore';
+import uuid from 'uuid';
 
+import QcActions from 'src/stores/alt/actions/QcActions';
+import UIActions from 'src/stores/alt/actions/UIActions';
+import QcStore from 'src/stores/alt/stores/QcStore';
 import UIStore from 'src/stores/alt/stores/UIStore';
 import UserStore from 'src/stores/alt/stores/UserStore';
-import UIActions from 'src/stores/alt/actions/UIActions';
-import QcActions from 'src/stores/alt/actions/QcActions';
-import QcStore from 'src/stores/alt/stores/QcStore';
 
-import ElementCollectionLabels from 'src/apps/mydb/elements/labels/ElementCollectionLabels';
+import SampleDetailsContainers from 'src/apps/mydb/elements/details/samples/analysesTab/SampleDetailsContainers';
 import ElementAnalysesLabels from 'src/apps/mydb/elements/labels/ElementAnalysesLabels';
+import ElementCollectionLabels from 'src/apps/mydb/elements/labels/ElementCollectionLabels';
+import ElementReactionLabels from 'src/apps/mydb/elements/labels/ElementReactionLabels';
 import PubchemLabels from 'src/components/pubchem/PubchemLabels';
 import PubchemLcss from 'src/components/pubchem/PubchemLcss';
-import ElementReactionLabels from 'src/apps/mydb/elements/labels/ElementReactionLabels';
-import SampleDetailsContainers from 'src/apps/mydb/elements/details/samples/analysesTab/SampleDetailsContainers';
 
 import StructureEditorModal from 'src/components/structureEditor/StructureEditorModal';
 
-import Sample from 'src/models/Sample';
-import Container from 'src/models/Container';
-import PolymerSection from 'src/apps/mydb/elements/details/samples/propertiesTab/PolymerSection';
-import ElementalCompositionGroup from 'src/apps/mydb/elements/details/samples/propertiesTab/ElementalCompositionGroup';
-import ToggleSection from 'src/components/common/ToggleSection';
-import SampleName from 'src/components/common/SampleName';
-import ClipboardCopyText from 'src/components/common/ClipboardCopyText';
-import SampleForm from 'src/apps/mydb/elements/details/samples/propertiesTab/SampleForm';
-import ComputedPropsContainer from 'src/components/computedProps/ComputedPropsContainer';
-import ComputedPropLabel from 'src/apps/mydb/elements/labels/ComputedPropLabel';
-import Utils from 'src/utilities/Functions';
-import PrintCodeButton from 'src/components/common/PrintCodeButton';
-import SampleDetailsLiteratures from 'src/apps/mydb/elements/details/literature/DetailsTabLiteratures';
-import MoleculesFetcher from 'src/fetchers/MoleculesFetcher';
-import QcMain from 'src/apps/mydb/elements/details/samples/qcTab/QcMain';
-import { chmoConversions } from 'src/components/OlsComponent';
-import ConfirmClose from 'src/components/common/ConfirmClose';
-import { EditUserLabels, ShowUserLabels } from 'src/components/UserLabels';
-import CopyElementModal from 'src/components/common/CopyElementModal';
-import NotificationActions from 'src/stores/alt/actions/NotificationActions';
-import MatrixCheck from 'src/components/common/MatrixCheck';
-import AttachmentFetcher from 'src/fetchers/AttachmentFetcher';
-import NmrSimTab from 'src/apps/mydb/elements/details/samples/nmrSimTab/NmrSimTab';
-import FastInput from 'src/apps/mydb/elements/details/samples/FastInput';
-import ScifinderSearch from 'src/components/scifinder/ScifinderSearch';
 import ElementDetailSortTab from 'src/apps/mydb/elements/details/ElementDetailSortTab';
-import { addSegmentTabs } from 'src/components/generic/SegmentDetails';
-import MeasurementsTab from 'src/apps/mydb/elements/details/samples/measurementsTab/MeasurementsTab';
-import { validateCas } from 'src/utilities/CasValidation';
-import ChemicalTab from 'src/components/ChemicalTab';
-import OpenCalendarButton from 'src/components/calendar/OpenCalendarButton';
-import HeaderCommentSection from 'src/components/comments/HeaderCommentSection';
-import CommentSection from 'src/components/comments/CommentSection';
-import CommentActions from 'src/stores/alt/actions/CommentActions';
-import CommentModal from 'src/components/common/CommentModal';
-import { formatTimeStampsOfElement } from 'src/utilities/timezoneHelper';
-import { commentActivation } from 'src/utilities/CommentHelper';
-import StructureEditor from 'src/models/StructureEditor';
-import IndigoServiceFetcher from 'src/fetchers/InidigoFetcher';
 import PrivateNoteElement from 'src/apps/mydb/elements/details/PrivateNoteElement';
+import SampleDetailsLiteratures from 'src/apps/mydb/elements/details/literature/DetailsTabLiteratures';
+import FastInput from 'src/apps/mydb/elements/details/samples/FastInput';
+import MeasurementsTab from 'src/apps/mydb/elements/details/samples/measurementsTab/MeasurementsTab';
+import NmrSimTab from 'src/apps/mydb/elements/details/samples/nmrSimTab/NmrSimTab';
+import ElementalCompositionGroup from 'src/apps/mydb/elements/details/samples/propertiesTab/ElementalCompositionGroup';
+import PolymerSection from 'src/apps/mydb/elements/details/samples/propertiesTab/PolymerSection';
+import SampleForm from 'src/apps/mydb/elements/details/samples/propertiesTab/SampleForm';
+import QcMain from 'src/apps/mydb/elements/details/samples/qcTab/QcMain';
+import ComputedPropLabel from 'src/apps/mydb/elements/labels/ComputedPropLabel';
+import ChemicalTab from 'src/components/ChemicalTab';
+import { chmoConversions } from 'src/components/OlsComponent';
+import { EditUserLabels, ShowUserLabels } from 'src/components/UserLabels';
+import OpenCalendarButton from 'src/components/calendar/OpenCalendarButton';
+import CommentSection from 'src/components/comments/CommentSection';
+import HeaderCommentSection from 'src/components/comments/HeaderCommentSection';
+import ClipboardCopyText from 'src/components/common/ClipboardCopyText';
+import CommentModal from 'src/components/common/CommentModal';
+import ConfirmClose from 'src/components/common/ConfirmClose';
+import CopyElementModal from 'src/components/common/CopyElementModal';
+import MatrixCheck from 'src/components/common/MatrixCheck';
+import PrintCodeButton from 'src/components/common/PrintCodeButton';
+import SampleName from 'src/components/common/SampleName';
+import ToggleSection from 'src/components/common/ToggleSection';
+import ComputedPropsContainer from 'src/components/computedProps/ComputedPropsContainer';
+import { addSegmentTabs } from 'src/components/generic/SegmentDetails';
+import ScifinderSearch from 'src/components/scifinder/ScifinderSearch';
+import AttachmentFetcher from 'src/fetchers/AttachmentFetcher';
+import IndigoServiceFetcher from 'src/fetchers/InidigoFetcher';
+import MoleculesFetcher from 'src/fetchers/MoleculesFetcher';
+import Container from 'src/models/Container';
+import Sample from 'src/models/Sample';
+import StructureEditor from 'src/models/StructureEditor';
+import CommentActions from 'src/stores/alt/actions/CommentActions';
+import NotificationActions from 'src/stores/alt/actions/NotificationActions';
+import { validateCas } from 'src/utilities/CasValidation';
+import { commentActivation } from 'src/utilities/CommentHelper';
+import Utils from 'src/utilities/Functions';
+import { formatTimeStampsOfElement } from 'src/utilities/timezoneHelper';
 
 
 const MWPrecision = 6;
@@ -845,10 +859,10 @@ export default class SampleDetails extends React.Component {
           <EditUserLabels element={sample} />
         </div>
         {this.elementalPropertiesItem(sample)}
-        <div style={{marginTop: '10px'}}>
+        <div style={{ marginTop: '10px' }}>
           <PrivateNoteElement element={sample} disabled={!sample.can_update} />
         </div>
-        
+
       </Tab>
     );
   }
@@ -1486,8 +1500,8 @@ export default class SampleDetails extends React.Component {
         ...EditorAttrs['ketcher2'],
         editor: "ketcher2",
         extSrc: "/editors/ket2/index.html",
-        label: "ketcher2",
-        id: 'ketcher22',
+        label: "ketcher2-temp",
+        id: 'ketcher2-temp',
       });
       const imgfile = await editor.structureDef.editor?.generateImage(molfile, { outputFormat: 'svg' });
       const svg = await imgfile?.text();
@@ -1497,7 +1511,7 @@ export default class SampleDetails extends React.Component {
       });
       sample.molfile = indigoMolfile?.struct;
       this.setState({ sample });
-      this.handleStructureEditorSave(indigoMolfile?.struct, svg, { smiles: '' }, 'ketcher2');
+      this.handleStructureEditorSave(indigoMolfile?.struct, svg, { smiles: '' }, '"ketcher2"');
       this.setState({ molfileConverstionRequired: false });
     }
   }
@@ -1590,7 +1604,7 @@ export default class SampleDetails extends React.Component {
 
   renderHiddenKetcher2EditorIframe() {
     return (
-      <iframe id={`ketcher22`} src={"/editors/ket2/index.html"} title={`ketcher2`} height={"600px"} width="100%" style={{ border: '1px solid #000', display: 'none' }} />
+      <iframe id={`ketcher2-temp`} src={"/editors/ket2/index.html"} title={`ketcher2`} style={{ display: 'none' }} />
     );
   }
 
