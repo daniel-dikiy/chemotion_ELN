@@ -205,8 +205,9 @@ module Chemotion
           }
           response = HTTParty.post("#{service_url}v2/indigo/render", options).body
           response
-
-          namespace :molecular_weight do
+        end
+      end
+      namespace :molecular_weight do
         desc 'Calculate the molecular mass from the molecular_formula for decoupled sample'
         params do
           requires :molecular_formula, type: String, desc: 'Molecular formula of decoupled sample'

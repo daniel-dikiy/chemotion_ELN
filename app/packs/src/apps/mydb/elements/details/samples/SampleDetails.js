@@ -81,6 +81,8 @@ import ToggleSection from 'src/components/common/ToggleSection';
 import ComputedPropsContainer from 'src/components/computedProps/ComputedPropsContainer';
 import { addSegmentTabs } from 'src/components/generic/SegmentDetails';
 import ScifinderSearch from 'src/components/scifinder/ScifinderSearch';
+import MolViewerBtn from 'src/components/viewer/MolViewerBtn';
+import MolViewerSet from 'src/components/viewer/MolViewerSet';
 import AttachmentFetcher from 'src/fetchers/AttachmentFetcher';
 import IndigoServiceFetcher from 'src/fetchers/InidigoFetcher';
 import MoleculesFetcher from 'src/fetchers/MoleculesFetcher';
@@ -93,8 +95,6 @@ import { validateCas } from 'src/utilities/CasValidation';
 import { commentActivation } from 'src/utilities/CommentHelper';
 import Utils from 'src/utilities/Functions';
 import { formatTimeStampsOfElement } from 'src/utilities/timezoneHelper';
-import MolViewerBtn from 'src/components/viewer/MolViewerBtn';
-import MolViewerSet from 'src/components/viewer/MolViewerSet';
 
 
 const MWPrecision = 6;
@@ -876,7 +876,7 @@ export default class SampleDetails extends React.Component {
         <EditUserLabels element={sample} fnCb={this.handleSampleChanged} />
         {this.elementalPropertiesItem(sample)}
         {this.chemicalIdentifiersItem(sample)}
-        <div style={{marginTop: '10px'}}>
+        <div style={{ marginTop: '10px' }}>
           <PrivateNoteElement element={sample} disabled={!sample.can_update} />
         </div>
       </Tab>
@@ -1431,29 +1431,40 @@ export default class SampleDetails extends React.Component {
       svgPath = sample.svgPath;
     }
     const className = svgPath ? 'svg-container' : 'svg-container-empty';
+
     return (
       sample.can_update
         ? (
-          <>
-            <div
-              className={className}
-              style={{ position: 'relative' }}
-              onClick={this.showStructureEditor.bind(this)}
-              onKeyPress={this.showStructureEditor.bind(this)}
-              role="button"
-              tabIndex="0"
-            >
-              <Glyphicon className="pull-right" glyph="pencil" />
-              <SVG key={svgPath} src={svgPath} className="molecule-mid" />
-            </div>
+          <div
+            className={className}
+            style={{ position: 'relative' }}
+            onClick={this.showStructureEditor.bind(this)}
+            onKeyPress
+            role="button"
+            tabIndex="0"
+          >
+            <Glyphicon className="pull-right" glyph="pencil" />
+            <SVG key={svgPath} src={svgPath} className="molecule-mid" />
+            {molfileConverstionRequired &&
+              <div
+                className={"file-type-conversion-button"}
+                onClick={this.convertFileContentWithIndigo}
+                onKeyPress
+                role="button"
+                tabIndex="0"
+              >
+                <Glyphicon className="pull-right" glyph="refresh" />
+              </div>
+            }
             <MolViewerBtn
-              className="structure-editor-container"
+              className={["structure-editor-container", !molfileConverstionRequired && "structure-editor-container-without-convert-button"].join(" ")}
               disabled={sample.isNew || !this.enableMoleculeViewer}
               fileContent={sample.molfile}
               isPublic={false}
               viewType={`mol_${sample.id}`}
             />
-          </>
+          </div>
+
         )
         : (
           <div className={"className"}>
