@@ -318,7 +318,7 @@ export default class SampleDetails extends React.Component {
     const { sample } = this.state;
     sample.molfile = molfile;
     const smiles = (config && sample.molecule) ? config.smiles : null;
-    sample.contains_residues = molfile.indexOf(' R# ') > -1;
+    sample.contains_residues = molfile?.indexOf(' R# ') > -1;
     sample.formulaChanged = true;
     this.setState({ loadingMolecule: true });
 
@@ -1438,20 +1438,25 @@ export default class SampleDetails extends React.Component {
           <div
             className={className}
             style={{ position: 'relative' }}
-            onClick={this.showStructureEditor.bind(this)}
-            onKeyPress
-            role="button"
-            tabIndex="0"
+
           >
-            <Glyphicon className="pull-right" glyph="pencil" />
-            <SVG key={svgPath} src={svgPath} className="molecule-mid" />
+            <div
+              onClick={this.showStructureEditor.bind(this)}
+              onKeyPress
+              role="button"
+              tabIndex="0"
+            >
+              <Glyphicon className="pull-right" glyph="pencil" />
+              <SVG key={svgPath} src={svgPath} className="molecule-mid" />
+            </div>
+
             {molfileConverstionRequired &&
               <div
                 className={"file-type-conversion-button"}
                 onClick={this.convertFileContentWithIndigo}
                 onKeyPress
                 role="button"
-                tabIndex="0"
+                tabIndex="1"
               >
                 <Glyphicon className="pull-right" glyph="refresh" />
               </div>
@@ -1540,14 +1545,14 @@ export default class SampleDetails extends React.Component {
       });
       sample.molfile = indigoMolfile?.struct;
       this.setState({ sample });
-      this.handleStructureEditorSave(indigoMolfile?.struct, svg, { smiles: '' }, '"ketcher2"');
+      this.handleStructureEditorSave(indigoMolfile?.struct, svg, { smiles: '' }, 'ketcher2');
       this.setState({ molfileConverstionRequired: false });
     }
   }
 
   isMolfileConverstionRequired() {
     const molfile = this.state.sample.molfile;
-    if (!molfile.includes("INDIGO")) {
+    if (!molfile?.includes("INDIGO")) {
       this.setState({ molfileConverstionRequired: true });
     }
   }
