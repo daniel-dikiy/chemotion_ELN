@@ -319,7 +319,7 @@ module Chemotion
         optional :description, type: String, desc: 'Sample description'
         optional :metrics, type: String, desc: 'Sample metric units'
         optional :purity, type: Float, desc: 'Sample purity'
-        optional :solvent, type: Array[Hash], desc: 'Sample solvent'
+        optional :solvent, type: [Hash], desc: 'Sample solvent'
         optional :location, type: String, desc: 'Sample location'
         optional :molfile, type: String, desc: 'Sample molfile'
         optional :sample_svg_file, type: String, desc: 'Sample SVG file'
@@ -382,14 +382,14 @@ module Chemotion
             next if prop_value.blank?
 
             attributes.merge!(
-              "#{prop}_attributes".to_sym => prop_value,
+              "#{prop}_attributes": prop_value,
             )
           end
 
-          boiling_point_lowerbound = (params['boiling_point_lowerbound'].presence || -Float::INFINITY)
-          boiling_point_upperbound = (params['boiling_point_upperbound'].presence || Float::INFINITY)
-          melting_point_lowerbound = (params['melting_point_lowerbound'].presence || -Float::INFINITY)
-          melting_point_upperbound = (params['melting_point_upperbound'].presence || Float::INFINITY)
+          boiling_point_lowerbound = params['boiling_point_lowerbound'].presence || -Float::INFINITY
+          boiling_point_upperbound = params['boiling_point_upperbound'].presence || Float::INFINITY
+          melting_point_lowerbound = params['melting_point_lowerbound'].presence || -Float::INFINITY
+          melting_point_upperbound = params['melting_point_upperbound'].presence || Float::INFINITY
           attributes['boiling_point'] = Range.new(boiling_point_lowerbound, boiling_point_upperbound)
           attributes['melting_point'] = Range.new(melting_point_lowerbound, melting_point_upperbound)
           attributes.delete(:boiling_point_lowerbound)
@@ -452,7 +452,7 @@ module Chemotion
         requires :purity, type: Float, desc: 'Sample purity'
         optional :dry_solvent, default: false, type: Boolean, desc: 'Sample dry solvent'
         # requires :solvent, type: String, desc: "Sample solvent"
-        optional :solvent, type: Array[Hash], desc: 'Sample solvent', default: []
+        optional :solvent, type: [Hash], desc: 'Sample solvent', default: []
         requires :location, type: String, desc: 'Sample location'
         optional :molfile, type: String, desc: 'Sample molfile'
         optional :sample_svg_file, type: String, desc: 'Sample SVG file'
@@ -519,10 +519,10 @@ module Chemotion
           sum_formula: params[:sum_formula],
         }
 
-        boiling_point_lowerbound = (params['boiling_point_lowerbound'].presence || -Float::INFINITY)
-        boiling_point_upperbound = (params['boiling_point_upperbound'].presence || Float::INFINITY)
-        melting_point_lowerbound = (params['melting_point_lowerbound'].presence || -Float::INFINITY)
-        melting_point_upperbound = (params['melting_point_upperbound'].presence || Float::INFINITY)
+        boiling_point_lowerbound = params['boiling_point_lowerbound'].presence || -Float::INFINITY
+        boiling_point_upperbound = params['boiling_point_upperbound'].presence || Float::INFINITY
+        melting_point_lowerbound = params['melting_point_lowerbound'].presence || -Float::INFINITY
+        melting_point_upperbound = params['melting_point_upperbound'].presence || Float::INFINITY
         attributes['boiling_point'] = Range.new(boiling_point_lowerbound, boiling_point_upperbound)
         attributes['melting_point'] = Range.new(melting_point_lowerbound, melting_point_upperbound)
 
@@ -543,7 +543,7 @@ module Chemotion
           next if prop_value.blank?
 
           attributes.merge!(
-            "#{prop}_attributes".to_sym => prop_value,
+            "#{prop}_attributes": prop_value,
           )
         end
         attributes.delete(:segments)
@@ -597,6 +597,25 @@ module Chemotion
         delete do
           sample = Sample.find(params[:id])
           sample.destroy
+        end
+      end
+
+      namespace :undo do
+        desc 'undo last change'
+        params do
+          requires :id, type: Integer, desc: 'Sample id'
+        end
+        route_param :id do
+          after_validation do
+            @element_policy = ElementPolicy.new(current_user, Sample.find(params[:id]))
+            error!('401 Unauthorized', 401) unless @element_policy.read?
+          rescue ActiveRecord::RecordNotFound
+            error!('404 Not Found', 404)
+          end
+
+          post do
+            Sample.with_log_data.find(params[:id]).undo!(append: true)
+          end
         end
       end
     end

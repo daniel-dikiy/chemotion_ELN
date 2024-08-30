@@ -119,7 +119,6 @@ export default class SamplesFetcher {
       credentials: 'same-origin',
       method: 'POST',
       headers: {
-        'Accept': 'application/json',
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
@@ -191,6 +190,15 @@ export default class SamplesFetcher {
     }).catch((errorMessage) => {
       console.log(errorMessage);
     });
+
+    return promise;
+  }
+
+  static undoLastChange(sample) {
+    const promise = fetch(`/api/v1/samples/undo/${sample.id}`, {
+      credentials: 'same-origin',
+      method: 'post',
+    }).then(() => SamplesFetcher.fetchById(sample.id));
 
     return promise;
   }

@@ -6,7 +6,7 @@ import {
   Tabs, Tab, OverlayTrigger, Tooltip
 } from 'react-bootstrap';
 import SvgFileZoomPan from 'react-svg-file-zoom-pan-latest';
-import { findIndex, _ } from 'lodash';
+import { findIndex, isEmpty } from 'lodash';
 import ElementCollectionLabels from 'src/apps/mydb/elements/labels/ElementCollectionLabels';
 import ElementResearchPlanLabels from 'src/apps/mydb/elements/labels/ElementResearchPlanLabels';
 import ElementAnalysesLabels from 'src/apps/mydb/elements/labels/ElementAnalysesLabels';
@@ -124,10 +124,13 @@ export default class ReactionDetails extends Component {
     const { reaction } = this.state;
     const nextReaction = nextProps.reaction;
 
-    if (nextReaction.id !== reaction.id
+    if (
+      nextReaction.id !== reaction.id
       || nextReaction.updated_at !== reaction.updated_at
       || nextReaction.reaction_svg_file !== reaction.reaction_svg_file
-      || nextReaction.changed || nextReaction.editedSample) {
+      || nextReaction.changed
+      || nextReaction.editedSample
+    ) {
       this.setState((prevState) => ({ ...prevState, reaction: nextReaction }));
     }
   }
@@ -212,19 +215,19 @@ export default class ReactionDetails extends Component {
     this.setState({ reaction }, cb);
   }
 
-  handleSelect(key) {
+  handleSelect = (key) => {
     UIActions.selectTab({ tabKey: key, type: 'reaction' });
     this.setState({
       activeTab: key
     });
-  }
+  };
 
-  handleSelectActiveAnalysisTab(key) {
+  handleSelectActiveAnalysisTab = (key) => {
     UIActions.selectActiveAnalysisTab(key);
     this.setState({
       activeAnalysisTab: key
     });
-  }
+  };
 
   handleSegmentsChange(se) {
     const { reaction } = this.state;
@@ -261,7 +264,7 @@ export default class ReactionDetails extends Component {
     const { reaction } = this.state;
     const { activeAnalysisTab } = this.state;
 
-    const tabs = reaction.map((product, key) => {
+    const tabs = reaction.products.map((product, key) => {
       const title = productLink(product);
       const setState = () => this.handleProductChange(product);
       const handleSampleChanged = (cb) => this.handleProductChange(product, cb);
@@ -345,7 +348,7 @@ export default class ReactionDetails extends Component {
       <ElementCollectionLabels element={reaction} key={reaction.id} placement="right" />
     );
 
-    const rsPlanLabel = (reaction.isNew || _.isEmpty(reaction.research_plans)) ? null : (
+    const rsPlanLabel = (reaction.isNew || isEmpty(reaction.research_plans)) ? null : (
       <ElementResearchPlanLabels plans={reaction.research_plans} key={reaction.id} placement="right" />
     );
     const { toggleFullScreen } = this.props;

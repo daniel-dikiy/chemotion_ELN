@@ -3,7 +3,7 @@
 /* eslint-disable react/forbid-prop-types */
 /* eslint-disable no-param-reassign */
 import React from 'react';
-import PropTypes, { object } from 'prop-types';
+import PropTypes from 'prop-types';
 import {
   Button, ButtonToolbar,
   InputGroup, FormGroup, FormControl,
@@ -18,6 +18,8 @@ import { cloneDeep, findIndex } from 'lodash';
 import uuid from 'uuid';
 import classNames from 'classnames';
 import Immutable from 'immutable';
+import { StoreContext } from 'src/stores/mobx/RootStore';
+import { observer } from 'mobx-react';
 
 import ElementActions from 'src/stores/alt/actions/ElementActions';
 import DetailActions from 'src/stores/alt/actions/DetailActions';
@@ -118,7 +120,10 @@ const moleculeCreatorTooltip = () => (
   <Tooltip id="assign_button">create molecule</Tooltip>
 );
 
-export default class SampleDetails extends React.Component {
+class SampleDetails extends React.Component {
+  // eslint-disable-next-line react/static-property-placement
+  static contextType = StoreContext;
+
   constructor(props) {
     super(props);
 
@@ -605,7 +610,11 @@ export default class SampleDetails extends React.Component {
 
   versioningTab(index) {
     const { sample } = this.state;
-    const logData = JSON.parse(sample.log_data);
+    let logData = JSON.parse('{"id": 0, "changes": {}}');
+    if (sample.log_data !== undefined) {
+      logData = JSON.parse(this.context.sampleDetailsStore.log_data !== '{}'
+        ? this.context.sampleDetailsStore.log_data : sample.log_data);
+    }
 
     return (
       <Tab
@@ -613,7 +622,7 @@ export default class SampleDetails extends React.Component {
         title="Versions"
         key={`Version_Sample_${sample.id.toString()}`}
       >
-        <Table>
+        <Table hover responsive>
           <tbody className="versions-table">
             <tr>
               <th>param name</th>
@@ -630,6 +639,11 @@ export default class SampleDetails extends React.Component {
 
           </tbody>
         </Table>
+        <ButtonToolbar>
+          <Button active id="undo" bsStyle="danger" onClick={() => this.undoLastChange()}>
+            Undo (Back to Old Values)
+          </Button>
+        </ButtonToolbar>
       </Tab>
     );
   }
@@ -1388,6 +1402,14 @@ export default class SampleDetails extends React.Component {
     this.setState({ showInchikey: !showInchikey });
   }
 
+  undoLastChange() {
+    const { sample } = this.state;
+    this.context.sampleDetailsStore.setChanged(true);
+    SamplesFetcher.undoLastChange(sample).then((newSample) => {
+      this.context.sampleDetailsStore.updateLogData(newSample.log_data);
+    });
+  }
+
   decoupleMolecule() {
     const { sample } = this.state;
     MoleculesFetcher.decouple(sample.molfile, sample.sample_svg_file, sample.decoupled)
@@ -1584,6 +1606,8 @@ export default class SampleDetails extends React.Component {
     );
   }
 }
+
+export default observer(SampleDetails);
 
 SampleDetails.propTypes = {
   sample: PropTypes.object.isRequired,
