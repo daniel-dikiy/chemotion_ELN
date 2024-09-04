@@ -611,10 +611,7 @@ class SampleDetails extends React.Component {
   versioningTab(index) {
     const { sample } = this.state;
     let logData = JSON.parse('{"id": 0, "changes": {}}');
-    if (sample.log_data !== undefined) {
-      logData = JSON.parse(this.context.sampleDetailsStore.log_data !== '{}'
-        ? this.context.sampleDetailsStore.log_data : sample.log_data);
-    }
+    if (sample.log_data !== undefined) logData = JSON.parse(this.context.sampleDetailsStore.log_data);
 
     return (
       <Tab
@@ -1403,10 +1400,12 @@ class SampleDetails extends React.Component {
   }
 
   undoLastChange() {
-    const { sample } = this.state;
+    let { sample } = this.state;
     this.context.sampleDetailsStore.setChanged(true);
     SamplesFetcher.undoLastChange(sample).then((newSample) => {
       this.context.sampleDetailsStore.updateLogData(newSample.log_data);
+      sample = newSample;
+      this.setState({ sample });
     });
   }
 
@@ -1491,6 +1490,7 @@ class SampleDetails extends React.Component {
   render() {
     const { sample } = this.state;
     const { visible, isChemicalEdited } = this.state;
+    this.context.sampleDetailsStore.updateLogData(sample.log_data);
     const tabContentsMap = {
       properties: this.samplePropertiesTab('properties'),
       analyses: this.sampleContainerTab('analyses'),
