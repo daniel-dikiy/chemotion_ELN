@@ -622,8 +622,8 @@ class SampleDetails extends React.Component {
         title="Versions"
         key={`Version_Sample_${sample.id.toString()}`}
       >
-        <Table hover responsive>
-          <tbody className="versions-table">
+        <Table bordered hover responsive>
+          <tbody>
             <tr>
               <th>param name</th>
               <th>old param value</th>
