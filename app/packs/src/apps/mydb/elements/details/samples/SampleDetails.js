@@ -98,7 +98,7 @@ import { formatTimeStampsOfElement } from 'src/utilities/timezoneHelper';
 
 
 const MWPrecision = 6;
-
+const temp_ketcher = "ketcher2-temp";
 const decoupleCheck = (sample) => {
   if (!sample.decoupled && sample.molecule && sample.molecule.id === '_none_') {
     NotificationActions.add({
@@ -158,6 +158,7 @@ export default class SampleDetails extends React.Component {
       isChemicalEdited: false,
       currentUser,
       molfileConverstionRequired: false,
+      ketcherPath: null
     };
 
     this.enableComputedProps = MatrixCheck(currentUser.matrix, 'computedProp');
@@ -1530,12 +1531,15 @@ export default class SampleDetails extends React.Component {
     const { molfileConverstionRequired, sample } = this.state;
     const { molfile } = sample;
     if (molfileConverstionRequired) {
+      const availableEditors = UIStore.getState().structureEditors || {};
+      this.setState({ ketcherPath: availableEditors.editors.ketcher2.extSrc });
+
       const editor = new StructureEditor({
         ...EditorAttrs['ketcher2'],
         editor: "ketcher2",
-        extSrc: "/editors/ket2/index.html",
-        label: "ketcher2-temp",
-        id: 'ketcher2-temp',
+        extSrc: availableEditors.editors.ketcher2.extSrc,
+        label: temp_ketcher,
+        id: temp_ketcher,
       });
       const imgfile = await editor.structureDef.editor?.generateImage(molfile, { outputFormat: 'svg' });
       const svg = await imgfile?.text();
@@ -1639,7 +1643,7 @@ export default class SampleDetails extends React.Component {
 
   renderHiddenKetcher2EditorIframe() {
     return (
-      <iframe id={`ketcher2-temp`} src={"/editors/ket2/index.html"} title={`ketcher2`} style={{ display: 'none' }} />
+      <iframe id={temp_ketcher} src={this.state.ketcherPath} title={`ketcher2`} style={{ display: 'none' }} />
     );
   }
 
