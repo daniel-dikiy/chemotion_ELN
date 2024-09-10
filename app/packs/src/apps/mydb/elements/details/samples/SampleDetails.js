@@ -611,13 +611,13 @@ class SampleDetails extends React.Component {
   versioningTab(index) {
     const { sample } = this.state;
     let logData = JSON.parse('{"id": 0, "changes": {}}');
-    if (sample.log_data !== undefined) logData = JSON.parse(this.context.sampleDetailsStore.log_data);
+    if (sample.log_data !== undefined) logData = JSON.parse(this.context.VersioningStore.log_data);
 
     return (
       <Tab
         eventKey={index}
-        title="Versions"
-        key={`Version_Sample_${sample.id.toString()}`}
+        title="Last Version"
+        key={`Last_Version_Sample_${sample.id.toString()}`}
       >
         <Table bordered hover responsive>
           <tbody>
@@ -627,7 +627,7 @@ class SampleDetails extends React.Component {
               <th>new param value</th>
             </tr>
             {Object.keys(logData.changes).map((key) => (
-              <tr key="paramChanges">
+              <tr key={key}>
                 <td>{key}</td>
                 <td>{JSON.stringify(logData.changes[key].old)}</td>
                 <td>{JSON.stringify(logData.changes[key].new)}</td>
@@ -638,7 +638,7 @@ class SampleDetails extends React.Component {
         </Table>
         <ButtonToolbar>
           <Button active id="undo" bsStyle="danger" onClick={() => this.undoLastChange()}>
-            Undo (Back to Old Values)
+            Revert
           </Button>
         </ButtonToolbar>
       </Tab>
@@ -1401,9 +1401,9 @@ class SampleDetails extends React.Component {
 
   undoLastChange() {
     let { sample } = this.state;
-    this.context.sampleDetailsStore.setChanged(true);
+    this.context.VersioningStore.setChanged(true);
     SamplesFetcher.undoLastChange(sample).then((newSample) => {
-      this.context.sampleDetailsStore.updateLogData(newSample.log_data);
+      this.context.VersioningStore.updateLogData(newSample.log_data);
       sample = newSample;
       this.setState({ sample });
     });
@@ -1490,7 +1490,7 @@ class SampleDetails extends React.Component {
   render() {
     const { sample } = this.state;
     const { visible, isChemicalEdited } = this.state;
-    this.context.sampleDetailsStore.updateLogData(sample.log_data);
+    this.context.VersioningStore.updateLogData(sample.log_data);
     const tabContentsMap = {
       properties: this.samplePropertiesTab('properties'),
       analyses: this.sampleContainerTab('analyses'),

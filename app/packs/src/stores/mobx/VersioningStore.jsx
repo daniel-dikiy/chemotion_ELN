@@ -2,7 +2,7 @@
 /* eslint-disable import/prefer-default-export */
 import { types } from 'mobx-state-tree';
 
-export const SampleDetailsStore = types
+export const VersioningStore = types
   .model({
     log_data: '{}',
     changed: false
