@@ -77,7 +77,8 @@ import { commentActivation } from 'src/utilities/CommentHelper';
 import PrivateNoteElement from 'src/apps/mydb/elements/details/PrivateNoteElement';
 import MolViewerBtn from 'src/components/viewer/MolViewerBtn';
 import MolViewerSet from 'src/components/viewer/MolViewerSet';
-
+// eslint-disable-next-line import/no-named-as-default
+import VersionsTable from 'src/apps/mydb/elements/details/VersionsTable';
 
 const MWPrecision = 6;
 
@@ -641,6 +642,27 @@ class SampleDetails extends React.Component {
             Revert
           </Button>
         </ButtonToolbar>
+      </Tab>
+    );
+  }
+
+  versioningTable(index) {
+    const { sample } = this.state;
+
+    return (
+      <Tab
+        eventKey={index}
+        title="All Versions"
+        key={`All_Versions_Sample_${sample.id.toString()}`}
+      >
+        <ListGroupItem>
+          <VersionsTable
+            type="samples"
+            id={sample.id}
+            element={sample}
+            parent={this}
+          />
+        </ListGroupItem>
       </Tab>
     );
   }
@@ -1498,7 +1520,8 @@ class SampleDetails extends React.Component {
       results: this.sampleImportReadoutTab('results'),
       qc_curation: this.qualityCheckTab('qc_curation'),
       measurements: this.measurementsTab('measurements'),
-      versioning: this.versioningTab('versioning')
+      versioning: this.versioningTab('versioning'),
+      versioning2: this.versioningTable('versioning2')
     };
 
     if (this.enableComputedProps) {
