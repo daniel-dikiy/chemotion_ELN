@@ -3495,6 +3495,20 @@
     node-gyp "^8.4.1"
     read-package-json-fast "^2.0.3"
 
+"@pdf-lib/standard-fonts@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@pdf-lib/standard-fonts/-/standard-fonts-1.0.0.tgz#8ba691c4421f71662ed07c9a0294b44528af2d7f"
+  integrity sha512-hU30BK9IUN/su0Mn9VdlVKsWBS6GyhVfqjwl1FjZN4TxP6cCw0jP2w7V3Hf5uX7M0AZJ16vey9yE0ny7Sa59ZA==
+  dependencies:
+    pako "^1.0.6"
+
+"@pdf-lib/upng@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@pdf-lib/upng/-/upng-1.0.1.tgz#7dc9c636271aca007a9df4deaf2dd7e7960280cb"
+  integrity sha512-dQK2FUMQtowVP00mtIksrlZhdFXQZPC+taih1q4CvPZ5vqdxR/LKBaFg0oAfzd1GlHZXXSPdQfzQnt+ViGvEIQ==
+  dependencies:
+    pako "^1.0.10"
+
 "@pmmmwh/react-refresh-webpack-plugin@^0.5.5":
   version "0.5.5"
   resolved "https://registry.yarnpkg.com/@pmmmwh/react-refresh-webpack-plugin/-/react-refresh-webpack-plugin-0.5.5.tgz#e77aac783bd079f548daa0a7f080ab5b5a9741ca"
@@ -4142,27 +4156,6 @@
     "@types/d3-transition" "*"
     "@types/d3-zoom" "*"
 
-"@types/eslint-scope@^3.7.3":
-  version "3.7.4"
-  resolved "https://registry.yarnpkg.com/@types/eslint-scope/-/eslint-scope-3.7.4.tgz#37fc1223f0786c39627068a12e94d6e6fc61de16"
-  integrity sha512-9K4zoImiZc3HlIp6AVUDE4CWYx22a+lhSZMYNpbjW04+YF0KWj4pJXnEMjdnFTiQibFFmElcsasJXDbdI/EPhA==
-  dependencies:
-    "@types/eslint" "*"
-    "@types/estree" "*"
-
-"@types/eslint@*":
-  version "8.4.1"
-  resolved "https://registry.npmjs.org/@types/eslint/-/eslint-8.4.1.tgz"
-  integrity sha512-GE44+DNEyxxh2Kc6ro/VkIj+9ma0pO0bwv9+uHSyBrikYOHr8zYcdPvnBOp1aw8s+CjRvuSx7CyWqRrNFQ59mA==
-  dependencies:
-    "@types/estree" "*"
-    "@types/json-schema" "*"
-
-"@types/estree@*":
-  version "0.0.50"
-  resolved "https://registry.npmjs.org/@types/estree/-/estree-0.0.50.tgz"
-  integrity sha512-C6N5s2ZFtuZRj54k2/zyRhNDjJwwcViAM3Nbm8zjBpbqAdZ00mr0CFxvSKeO8Y/e03WVFLpQMdHYVfUd6SB+Hw==
-
 "@types/estree@^1.0.5":
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/@types/estree/-/estree-1.0.5.tgz#a6ce3e556e00fd9895dd872dd172ad0d4bd687f4"
@@ -4249,7 +4242,7 @@
     expect "^29.0.0"
     pretty-format "^29.0.0"
 
-"@types/json-schema@*", "@types/json-schema@^7.0.5", "@types/json-schema@^7.0.8", "@types/json-schema@^7.0.9":
+"@types/json-schema@^7.0.5", "@types/json-schema@^7.0.8", "@types/json-schema@^7.0.9":
   version "7.0.9"
   resolved "https://registry.npmjs.org/@types/json-schema/-/json-schema-7.0.9.tgz"
   integrity sha512-qcUXuemtEu+E5wZSJHNxUXeCZhAfXKQ41D+duX+VYPde7xyEVZci+/oXKJL13tnRs9lR2pr4fod59GT6/X1/yQ==
@@ -5804,10 +5797,10 @@ cheerio@^1.0.0-rc.3:
     parse5-htmlparser2-tree-adapter "^6.0.1"
     tslib "^2.2.0"
 
-chem-generic-ui@^1.4.0:
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/chem-generic-ui/-/chem-generic-ui-1.4.0.tgz#67f6041b5671aa848bf4afcc72a2a403ef3b69b8"
-  integrity sha512-m38x2XXDnQxriiBe4bv3Z31gT86mi6ujM5eWDuoXs98t6lDqJt4NqLRau68W2CYQLp8jn6j3QKgvB7vTCFC9hA==
+chem-generic-ui@^1.4.4:
+  version "1.4.4"
+  resolved "https://registry.yarnpkg.com/chem-generic-ui/-/chem-generic-ui-1.4.4.tgz#2b3662031af2278cc5606f8d5879f3be02155d4b"
+  integrity sha512-U5r9bqFFgs8mOeBBX/eu1ICD8vI8TvnzUi7WPVXDc38GEeD8npSRrG3WgKVSymrRNK6vO77hGHO4ZBV/ExCCwg==
   dependencies:
     "@fortawesome/fontawesome-svg-core" "^6.5.2"
     "@fortawesome/free-regular-svg-icons" "^6.5.2"
@@ -5816,7 +5809,7 @@ chem-generic-ui@^1.4.0:
     ag-grid-community "^32.0.1"
     ag-grid-react "^32.0.1"
     date-fns "^2.29.3"
-    generic-ui-core "^1.4.6"
+    generic-ui-core "^1.4.7"
     html-to-image "^1.11.11"
     lodash "^4.17.21"
     moment "^2.29.4"
@@ -5833,10 +5826,10 @@ chem-generic-ui@^1.4.0:
     reactflow "^11.7.2"
     uuid "^9.0.0"
 
-chem-units@^1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/chem-units/-/chem-units-1.1.0.tgz#65d93db9686a50bb59430e34732f497aa2804be8"
-  integrity sha512-A3jY/B2aEb5s9bmg2lk77QYUl4xCTTCeeKQPbKfwvcD7DseuL40UF6o5Veusfkip8NOcdQ3X6m2hNLMdJKXHbg==
+chem-units@^1.1.2:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/chem-units/-/chem-units-1.1.2.tgz#38f5c6af67a99e6eb661256c303a570f85df6687"
+  integrity sha512-JC4PtdFMlDfzZHYunMaVGiIEkXxqsQqknzDLRvethzhIjE/w3UyVbB93pyYzSnQxxqTpXy10TZTdGN2VdASl5w==
 
 chemotion-converter-client@0.5.0:
   version "0.5.0"
@@ -7550,7 +7543,7 @@ end-of-stream@^1.1.0:
   dependencies:
     once "^1.4.0"
 
-enhanced-resolve@^5.17.0:
+enhanced-resolve@^5.17.1:
   version "5.17.1"
   resolved "https://registry.yarnpkg.com/enhanced-resolve/-/enhanced-resolve-5.17.1.tgz#67bfbbcc2f81d511be77d686a90267ef7f898a15"
   integrity sha512-LMHl3dXhTcfv8gM4kEzIUeTQ+7fpdA0l2tUf34BddXPkz2A5xJ5L/Pchd5BL6rdccM9QGvu0sWZzK1Z1t4wwyg==
@@ -8566,12 +8559,12 @@ gauge@^4.0.3:
     strip-ansi "^6.0.1"
     wide-align "^1.1.5"
 
-generic-ui-core@^1.4.6:
-  version "1.4.6"
-  resolved "https://registry.yarnpkg.com/generic-ui-core/-/generic-ui-core-1.4.6.tgz#342ead068ff6287a1c28ebd3ffe4b91699869588"
-  integrity sha512-GMhFfpwllH2v15rIyt0bctLEZJLyobZKTtind1Kxrlxpp+GY98vVIB2+g5kxsuUZjfWQTgRA/sT2KeeXvHq2Hw==
+generic-ui-core@^1.4.7:
+  version "1.4.7"
+  resolved "https://registry.yarnpkg.com/generic-ui-core/-/generic-ui-core-1.4.7.tgz#1bcc82e03b0af1eae8459cf2dc2ce6a63e8d3545"
+  integrity sha512-ifvcZfz+mfOX5GmvbFpKTBaQTcvR+vXtUATtSiECJ2KN7qj2nDK/czM5rntOv/IGeBZCGrKhrcbgeiwFKcy+QQ==
   dependencies:
-    chem-units "^1.1.0"
+    chem-units "^1.1.2"
     lodash "^4.17.21"
 
 gensync@^1.0.0-beta.2:
@@ -11787,6 +11780,11 @@ pacote@^13.0.3, pacote@^13.0.5, pacote@^13.4.1, pacote@^13.5.0:
     ssri "^9.0.0"
     tar "^6.1.11"
 
+pako@^1.0.10, pako@^1.0.11, pako@^1.0.6:
+  version "1.0.11"
+  resolved "https://registry.yarnpkg.com/pako/-/pako-1.0.11.tgz#6c9599d340d54dfd3946380252a35705a6b992bf"
+  integrity sha512-4hLB8Py4zZce5s4yd9XzopqwVv/yGNhV1Bl8NTmCq1763HeK2+EwVTv+leGeL13Dnh2wfbqowVPXCIO0z4taYw==
+
 papaparse@^5.3.1:
   version "5.3.1"
   resolved "https://registry.npmjs.org/papaparse/-/papaparse-5.3.1.tgz"
@@ -11942,6 +11940,16 @@ pathseg@1.2.1:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/pathseg/-/pathseg-1.2.1.tgz#50b3fc4fc05c64f4a52f8c04156f6f3975b0df3c"
   integrity sha512-LtvemzPvcGamWBbNWJaIrgfUzpynXfwYrP6SSFVRhNHVcCaq6SVm4kRGJNuIV8qzBKgCN3fEXFZZ16YETFIXoA==
+
+pdf-lib@^1.17.1:
+  version "1.17.1"
+  resolved "https://registry.yarnpkg.com/pdf-lib/-/pdf-lib-1.17.1.tgz#9e7dd21261a0c1fb17992580885b39e7d08f451f"
+  integrity sha512-V/mpyJAoTsN4cnP31vc0wfNA1+p20evqqnap0KLoRUN0Yk/p3wN52DOEsL4oBFcLdb76hlpKPtzJIgo67j/XLw==
+  dependencies:
+    "@pdf-lib/standard-fonts" "^1.0.0"
+    "@pdf-lib/upng" "^1.0.1"
+    pako "^1.0.11"
+    tslib "^1.11.1"
 
 pdfjs-dist@3.11.174:
   version "3.11.174"
@@ -13026,10 +13034,10 @@ react-markdown@^6.0.2:
     unist-util-visit "^2.0.0"
     vfile "^4.0.0"
 
-react-molviewer@^1.1.2:
-  version "1.1.2"
-  resolved "https://registry.yarnpkg.com/react-molviewer/-/react-molviewer-1.1.2.tgz#7dd0b46144d2b0eb2929e358027fea30c2ea415a"
-  integrity sha512-cJFpaVHLPSx8N8viqUw3SOw4tozhF874Tos2+8qBhrpdmCWbR2lZQeLIfDhwh8x9h0rxv7rcHKjBtrv9qrg4fA==
+react-molviewer@^1.1.3:
+  version "1.1.3"
+  resolved "https://registry.yarnpkg.com/react-molviewer/-/react-molviewer-1.1.3.tgz#80183af3904d0ab6560762f2980d27c069fade59"
+  integrity sha512-muxVRJTEr+y2iOuztrQW3UtZh7ge5zhwskuo2h+w6GjEg1A4qva6NvOVRr95RiNP/PJtxgnO7NOowzUx9wzjJQ==
   dependencies:
     prop-types "^15.8.1"
     react "^17.0.2"
@@ -14909,7 +14917,7 @@ tsconfig-paths@^3.14.1:
     minimist "^1.2.6"
     strip-bom "^3.0.0"
 
-tslib@^1.9.3:
+tslib@^1.11.1, tslib@^1.9.3:
   version "1.14.1"
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-1.14.1.tgz#cf2d38bdc34a134bcaf1091c41f6619e2f672d00"
   integrity sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg==
@@ -15545,11 +15553,10 @@ webpack-sources@^3.2.1, webpack-sources@^3.2.3:
   integrity sha512-/DyMEOrDgLKKIG0fmvtz+4dUX/3Ghozwgm6iPp8KRhvn+eQf9+Q7GWxVNMk3+uCPWfdXYC4ExGBckIXdFEfH1w==
 
 webpack@^5.53.0:
-  version "5.93.0"
-  resolved "https://registry.yarnpkg.com/webpack/-/webpack-5.93.0.tgz#2e89ec7035579bdfba9760d26c63ac5c3462a5e5"
-  integrity sha512-Y0m5oEY1LRuwly578VqluorkXbvXKh7U3rLoQCEO04M97ScRr44afGVkI0FQFsXzysk5OgFAxjZAb9rsGQVihA==
+  version "5.94.0"
+  resolved "https://registry.yarnpkg.com/webpack/-/webpack-5.94.0.tgz#77a6089c716e7ab90c1c67574a28da518a20970f"
+  integrity sha512-KcsGn50VT+06JH/iunZJedYGUJS5FGjow8wb9c0v5n1Om8O1g4L6LjtfxwlXIATopoQu+vOXXa7gYisWxCoPyg==
   dependencies:
-    "@types/eslint-scope" "^3.7.3"
     "@types/estree" "^1.0.5"
     "@webassemblyjs/ast" "^1.12.1"
     "@webassemblyjs/wasm-edit" "^1.12.1"
@@ -15558,7 +15565,7 @@ webpack@^5.53.0:
     acorn-import-attributes "^1.9.5"
     browserslist "^4.21.10"
     chrome-trace-event "^1.0.2"
-    enhanced-resolve "^5.17.0"
+    enhanced-resolve "^5.17.1"
     es-module-lexer "^1.2.1"
     eslint-scope "5.1.1"
     events "^3.2.0"

@@ -447,10 +447,33 @@ export default class ReactionDetails extends Component {
     this.handleInputChange('gaseous', !reaction.gaseous);
   }
 
+  // eslint-disable-next-line class-methods-use-this
+  updateReactionVesselSize(reaction) {
+    Promise.resolve().then(() => {
+      const { catalystMoles, vesselSize } = reaction.findReactionVesselSizeCatalystMaterialValues();
+
+      if (vesselSize) {
+        GasPhaseReactionActions.setReactionVesselSize(vesselSize);
+      }
+
+      if (catalystMoles) {
+        GasPhaseReactionActions.setCatalystReferenceMole(catalystMoles);
+      }
+
+      if (!vesselSize) {
+        GasPhaseReactionActions.setReactionVesselSize(null);
+      }
+
+      if (!catalystMoles) {
+        GasPhaseReactionActions.setCatalystReferenceMole(null);
+      }
+    });
+  }
+
   render() {
-    const { reaction } = this.state;
-    const { visible } = this.state;
-    const schemeTitle = reaction ? (
+    const { reaction, visible, activeTab } = this.state;
+    this.updateReactionVesselSize(reaction);
+    const schemeTitle = reaction && activeTab === 'scheme' ? (
       <div style={{ display: 'flex' }}>
         <div style={{ paddingRight: '2px' }}>
           <ToggleButton
@@ -548,7 +571,7 @@ export default class ReactionDetails extends Component {
     const submitLabel = (reaction && reaction.isNew) ? 'Create' : 'Save';
     const exportButton = (reaction && reaction.isNew) ? null : <ExportSamplesBtn type="reaction" id={reaction.id} />;
 
-    const activeTab = (this.state.activeTab !== 0 && this.state.activeTab) || visible[0];
+    const currentTab = (activeTab !== 0 && activeTab) || visible[0];
 
     return (
       <Panel className="eln-panel-detail"
@@ -563,7 +586,7 @@ export default class ReactionDetails extends Component {
             onTabPositionChanged={this.onTabPositionChanged}
           />
           {this.state.sfn ? <ScifinderSearch el={reaction} /> : null}
-          <Tabs activeKey={activeTab} onSelect={this.handleSelect.bind(this)} id="reaction-detail-tab" unmountOnExit={true}>
+          <Tabs activeKey={currentTab} onSelect={this.handleSelect.bind(this)} id="reaction-detail-tab" unmountOnExit={true}>
             {tabContents}
           </Tabs>
           <hr />

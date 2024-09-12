@@ -237,6 +237,7 @@ class Material extends Component {
     const purity = refMaterial?.purity || 1;
     const feedstockMolValue = calculateFeedstockMoles(vesselVolume, purity);
     const result = material.amount_mol / feedstockMolValue;
+    if (!result) return 'n.a.';
     return result > 1 ? '100%' : `${(result * 100).toFixed(0)}%`;
   }
 
@@ -920,7 +921,6 @@ class Material extends Component {
 
   materialNameWithIupac(material) {
     const { index, materialGroup, reaction } = this.props;
-    const gaseousReactionStore = GasPhaseReactionStore.getState();
     // Skip shortLabel for reactants and solvents/purification_solvents
     const skipIupacName = (
       materialGroup === 'reactants' ||
@@ -938,9 +938,11 @@ class Material extends Component {
     };
 
     const idCheck = /^\d+$/;
+    const truncatedSampleName = material.molecule_iupac_name?.length > 20 && materialGroup === 'reactants'
+      ? material.molecule_iupac_name?.substring(1, 25) : material.molecule_iupac_name;
 
     if (skipIupacName) {
-      let materialDisplayName = material.molecule_iupac_name || material.name;
+      let materialDisplayName = truncatedSampleName || material.name;
       if (materialGroup === 'solvents' || materialGroup === 'purification_solvents') {
         materialDisplayName = material.external_label || materialDisplayName;
       }
