@@ -31,7 +31,6 @@ import {
 } from 'react-bootstrap';
 import SVG from 'react-inlinesvg';
 import Select from 'react-select';
-import EditorAttrs from 'src/components/structureEditor/StructureEditorSet';
 import DetailActions from 'src/stores/alt/actions/DetailActions';
 import ElementActions from 'src/stores/alt/actions/ElementActions';
 import LoadingActions from 'src/stores/alt/actions/LoadingActions';
@@ -88,7 +87,6 @@ import IndigoServiceFetcher from 'src/fetchers/InidigoFetcher';
 import MoleculesFetcher from 'src/fetchers/MoleculesFetcher';
 import Container from 'src/models/Container';
 import Sample from 'src/models/Sample';
-import StructureEditor from 'src/models/StructureEditor';
 import CommentActions from 'src/stores/alt/actions/CommentActions';
 import NotificationActions from 'src/stores/alt/actions/NotificationActions';
 import { validateCas } from 'src/utilities/CasValidation';
@@ -98,7 +96,6 @@ import { formatTimeStampsOfElement } from 'src/utilities/timezoneHelper';
 
 
 const MWPrecision = 6;
-const temp_ketcher = "ketcher2-temp";
 const decoupleCheck = (sample) => {
   if (!sample.decoupled && sample.molecule && sample.molecule.id === '_none_') {
     NotificationActions.add({
@@ -1463,7 +1460,7 @@ export default class SampleDetails extends React.Component {
               </div>
             }
             <MolViewerBtn
-              className={["structure-editor-container", !molfileConverstionRequired && "structure-editor-container-without-convert-button"].join(" ")}
+              className={classNames("structure-editor-container", !molfileConverstionRequired && "structure-editor-container-without-convert-button")}
               disabled={sample.isNew || !this.enableMoleculeViewer}
               fileContent={sample.molfile}
               isPublic={false}
@@ -1473,7 +1470,7 @@ export default class SampleDetails extends React.Component {
 
         )
         : (
-          <div className={"className"}>
+          <div>
             <SVG key={svgPath} src={svgPath} className="molecule-mid" />
             <MolViewerBtn
               className="structure-editor-container"
@@ -1531,31 +1528,36 @@ export default class SampleDetails extends React.Component {
     const { molfileConverstionRequired, sample } = this.state;
     const { molfile } = sample;
     if (molfileConverstionRequired) {
-      const availableEditors = UIStore.getState().structureEditors || {};
-      this.setState({ ketcherPath: availableEditors.editors.ketcher2.extSrc });
+      // const availableEditors = UIStore.getState().structureEditors || {};
+      // this.setState({ ketcherPath: availableEditors.editors.ketcher2.extSrc });
 
-      const editor = new StructureEditor({
-        ...EditorAttrs['ketcher2'],
-        editor: "ketcher2",
-        extSrc: availableEditors.editors.ketcher2.extSrc,
-        label: temp_ketcher,
-        id: temp_ketcher,
-      });
-      const imgfile = await editor.structureDef.editor?.generateImage(molfile, { outputFormat: 'svg' });
-      const svg = await imgfile?.text();
+      // const editor = new StructureEditor({
+      //   ...EditorAttrs['ketcher2'],
+      //   editor: temp_ketcher,
+      //   extSrc: availableEditors.editors.ketcher2.extSrc,
+      //   label: temp_ketcher,
+      //   id: temp_ketcher,
+      // });
+      // const imgfile = await editor.structureDef.editor?.generateImage(molfile, { outputFormat: 'svg' });
+      // const svg = await imgfile?.text();
       const indigoMolfile = await IndigoServiceFetcher.convertMolfileStructure({
         struct: molfile,
-        output_format: null
       });
-      sample.molfile = indigoMolfile?.struct;
-      this.setState({ sample });
-      this.handleStructureEditorSave(indigoMolfile?.struct, svg, { smiles: '' }, 'ketcher2');
-      this.setState({ molfileConverstionRequired: false });
+      // sample.molfile = indigoMolfile?.struct;
+      if (indigoMolfile?.struct) {
+        const indigoSVG = await IndigoServiceFetcher.rendertMolfileToSvg({
+          struct: molfile,
+        });
+        this.setState({ sample });
+        this.handleStructureEditorSave(indigoMolfile?.struct, indigoSVG, { smiles: '' }, 'ketcher2');
+        this.setState({ molfileConverstionRequired: false });
+      }
     }
   }
 
   isMolfileConverstionRequired() {
     const molfile = this.state.sample.molfile;
+    console.log("Selected Molfile", molfile);
     if (!molfile?.includes("INDIGO")) {
       this.setState({ molfileConverstionRequired: true });
     }
@@ -1643,7 +1645,14 @@ export default class SampleDetails extends React.Component {
 
   renderHiddenKetcher2EditorIframe() {
     return (
-      <iframe id={temp_ketcher} src={this.state.ketcherPath} title={`ketcher2`} style={{ display: 'none' }} />
+      <iframe
+        id={"temp_ketcher"}
+        src={this.state.ketcherPath}
+        title={`ketcher2`}
+        style={{ display: 'none' }}
+        height={"630px"}
+        width="100%"
+      />
     );
   }
 
@@ -1758,7 +1767,7 @@ export default class SampleDetails extends React.Component {
           {this.sampleFooter()}
           {this.structureEditorModal(sample)}
           {this.renderMolfileModal()}
-          {this.renderHiddenKetcher2EditorIframe()}
+          {/* {this.renderHiddenKetcher2EditorIframe()} */}
           <CommentModal element={sample} />
         </Panel.Body>
       </Panel>
