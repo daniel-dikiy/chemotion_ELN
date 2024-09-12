@@ -1530,9 +1530,10 @@ export default class SampleDetails extends React.Component {
     const { molfileConverstionRequired, sample } = this.state;
     const { molfile } = sample;
     if (molfileConverstionRequired) {
-      const indigoMolfile = await IndigoServiceFetcher.convertMolfileStructure({
+      let indigoMolfile = await IndigoServiceFetcher.convertMolfileStructure({
         struct: molfile,
       });
+      indigoMolfile = JSON.parse(indigoMolfile);
       if (indigoMolfile?.struct) {
         const indigoSVG = await IndigoServiceFetcher.rendertMolfileToSvg({
           struct: molfile,

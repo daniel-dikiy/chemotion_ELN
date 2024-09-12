@@ -1,6 +1,7 @@
 module Chemotion
   class MoleculeAPI < Grape::API
     include Grape::Kaminari
+    helpers IndigoServiceHelpers
 
     resource :molecules do
       namespace :sf do
@@ -172,18 +173,8 @@ module Chemotion
                                    default: 'chemical/x-mdl-molfile'
         end
         post 'structure/convert' do
-          service_url = Rails.configuration.indigo_service.indigo_service_url
-          options = {
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: {
-              struct: params[:struct],
-              output_format: params[:output_format],
-            }.to_json,
-          }
-          response = HTTParty.post("#{service_url}v2/indigo/convert", options).body
-          JSON.parse(response)
+          request_data = request_indigo_service(params[:struct], params[:output_format])
+          indigo_call_validate("#{request_data[0]}v2/indigo/convert", request_data[1])
         end
 
         desc 'render Molfile structure'
@@ -193,18 +184,8 @@ module Chemotion
                                    default: 'image/svg+xml'
         end
         post 'structure/render' do
-          service_url = Rails.configuration.indigo_service.indigo_service_url
-          options = {
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: {
-              struct: params[:struct],
-              output_format: params[:output_format],
-            }.to_json,
-          }
-          response = HTTParty.post("#{service_url}v2/indigo/render", options).body
-          response
+          request_data = request_indigo_service(params[:struct], params[:output_format])
+          indigo_call_validate("#{request_data[0]}v2/indigo/render", request_data[1])
         end
       end
 
