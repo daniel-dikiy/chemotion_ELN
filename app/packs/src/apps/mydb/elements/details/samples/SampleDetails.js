@@ -1528,22 +1528,9 @@ export default class SampleDetails extends React.Component {
     const { molfileConverstionRequired, sample } = this.state;
     const { molfile } = sample;
     if (molfileConverstionRequired) {
-      // const availableEditors = UIStore.getState().structureEditors || {};
-      // this.setState({ ketcherPath: availableEditors.editors.ketcher2.extSrc });
-
-      // const editor = new StructureEditor({
-      //   ...EditorAttrs['ketcher2'],
-      //   editor: temp_ketcher,
-      //   extSrc: availableEditors.editors.ketcher2.extSrc,
-      //   label: temp_ketcher,
-      //   id: temp_ketcher,
-      // });
-      // const imgfile = await editor.structureDef.editor?.generateImage(molfile, { outputFormat: 'svg' });
-      // const svg = await imgfile?.text();
       const indigoMolfile = await IndigoServiceFetcher.convertMolfileStructure({
         struct: molfile,
       });
-      // sample.molfile = indigoMolfile?.struct;
       if (indigoMolfile?.struct) {
         const indigoSVG = await IndigoServiceFetcher.rendertMolfileToSvg({
           struct: molfile,
@@ -1557,7 +1544,6 @@ export default class SampleDetails extends React.Component {
 
   isMolfileConverstionRequired() {
     const molfile = this.state.sample.molfile;
-    console.log("Selected Molfile", molfile);
     if (!molfile?.includes("INDIGO")) {
       this.setState({ molfileConverstionRequired: true });
     }
@@ -1641,19 +1627,6 @@ export default class SampleDetails extends React.Component {
       );
     }
     return (<div />);
-  }
-
-  renderHiddenKetcher2EditorIframe() {
-    return (
-      <iframe
-        id={"temp_ketcher"}
-        src={this.state.ketcherPath}
-        title={`ketcher2`}
-        style={{ display: 'none' }}
-        height={"630px"}
-        width="100%"
-      />
-    );
   }
 
   render() {
@@ -1767,7 +1740,6 @@ export default class SampleDetails extends React.Component {
           {this.sampleFooter()}
           {this.structureEditorModal(sample)}
           {this.renderMolfileModal()}
-          {/* {this.renderHiddenKetcher2EditorIframe()} */}
           <CommentModal element={sample} />
         </Panel.Body>
       </Panel>

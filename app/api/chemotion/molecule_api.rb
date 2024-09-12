@@ -207,6 +207,7 @@ module Chemotion
           response
         end
       end
+
       namespace :molecular_weight do
         desc 'Calculate the molecular mass from the molecular_formula for decoupled sample'
         params do
