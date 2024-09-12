@@ -5,20 +5,6 @@ export default class IndigoServiceFetcher {
   static convertMolfileStructure(params) {
     const { struct, output_format } = params;
 
-    // enum: param output_format ***
-    // default: chemical/x-mdl-molfile
-    // - chemical/x-mdl-rxnfile
-    // - chemical/x-mdl-molfile
-    // - chemical/x-indigo-ket
-    // - chemical/x-daylight-smiles
-    // - chemical/x-chemaxon-cxsmiles
-    // - chemical/x-cml
-    // - chemical/x-inchi
-    // - chemical/x-inchi-key
-    // - chemical/x-iupac
-    // - chemical/x-daylight-smarts
-    // - chemical/x-inchi-aux
-
     return fetch(`/api/v1/molecules/indigo/structure/convert`, {
       credentials: 'same-origin',
       method: 'POST',
