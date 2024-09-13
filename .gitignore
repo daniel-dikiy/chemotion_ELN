@@ -218,6 +218,3 @@ public/sprite.png
 data/klasses.json
 
 public/pdf.worker.min.js
-
-# temp
-/spec/api/chemotion/indigo_service_spec.rb
