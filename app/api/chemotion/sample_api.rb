@@ -54,7 +54,7 @@ module Chemotion
           col_id = ui_state[:currentCollectionId]
           sample_ids = Sample.for_user(current_user.id)
                              .for_ui_state_with_collection(ui_state[:sample], CollectionsSample, col_id)
-          Sample.where(id: sample_ids).each do |sample|
+          Sample.where(id: sample_ids).find_each do |sample|
             subsample = sample.create_subsample(current_user, col_id, true, 'sample')
           end
 
@@ -552,13 +552,13 @@ module Chemotion
         sample = Sample.new(attributes)
 
         if params[:collection_id]
-          collection = current_user.collections.where(id: params[:collection_id]).take
+          collection = current_user.collections.find_by(id: params[:collection_id])
           sample.collections << collection if collection.present?
         end
 
         is_shared_collection = false
         if collection.blank?
-          sync_collection = current_user.all_sync_in_collections_users.where(id: params[:collection_id]).take
+          sync_collection = current_user.all_sync_in_collections_users.find_by(id: params[:collection_id])
           if sync_collection.present?
             is_shared_collection = true
             sample.collections << Collection.find(sync_collection['collection_id'])
@@ -597,25 +597,6 @@ module Chemotion
         delete do
           sample = Sample.find(params[:id])
           sample.destroy
-        end
-      end
-
-      namespace :undo do
-        desc 'undo last change'
-        params do
-          requires :id, type: Integer, desc: 'Sample id'
-        end
-        route_param :id do
-          after_validation do
-            @element_policy = ElementPolicy.new(current_user, Sample.find(params[:id]))
-            error!('401 Unauthorized', 401) unless @element_policy.read?
-          rescue ActiveRecord::RecordNotFound
-            error!('404 Not Found', 404)
-          end
-
-          post do
-            Sample.with_log_data.find(params[:id]).undo!(append: true)
-          end
         end
       end
     end

@@ -8,8 +8,6 @@ import GenericElsFetcher from 'src/fetchers/GenericElsFetcher';
 
 export default class SamplesFetcher {
   static fetchSamplesByUIStateAndLimit(params) {
-    const limit = params.limit ? limit : null;
-
     return fetch('/api/v1/samples/ui_state/', {
       credentials: 'same-origin',
       method: 'POST',
@@ -190,15 +188,6 @@ export default class SamplesFetcher {
     }).catch((errorMessage) => {
       console.log(errorMessage);
     });
-
-    return promise;
-  }
-
-  static undoLastChange(sample) {
-    const promise = fetch(`/api/v1/samples/undo/${sample.id}`, {
-      credentials: 'same-origin',
-      method: 'post',
-    }).then(() => SamplesFetcher.fetchById(sample.id));
 
     return promise;
   }

@@ -5,7 +5,6 @@ import { types } from 'mobx-state-tree';
 export const VersioningStore = types
   .model({
     versions: '[]',
-    log_data: '{}',
     changed: false
   }).actions((self) => ({
     setChanged(newChanged) {
@@ -13,8 +12,5 @@ export const VersioningStore = types
     },
     updateVersions(versions) {
       self.versions = versions;
-    },
-    updateLogData(logData) {
-      self.log_data = logData;
     }
   }));

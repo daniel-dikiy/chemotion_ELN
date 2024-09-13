@@ -9,7 +9,7 @@ import {
   InputGroup, FormGroup, FormControl,
   Panel, ListGroup, ListGroupItem, Glyphicon, Tabs, Tab, Row, Col,
   Tooltip, OverlayTrigger,
-  ControlLabel, Modal, Alert, Checkbox, Table
+  ControlLabel, Modal, Alert, Checkbox
 } from 'react-bootstrap';
 import SVG from 'react-inlinesvg';
 import Clipboard from 'clipboard';
@@ -18,8 +18,6 @@ import { cloneDeep, findIndex } from 'lodash';
 import uuid from 'uuid';
 import classNames from 'classnames';
 import Immutable from 'immutable';
-import { StoreContext } from 'src/stores/mobx/RootStore';
-import { observer } from 'mobx-react';
 
 import ElementActions from 'src/stores/alt/actions/ElementActions';
 import DetailActions from 'src/stores/alt/actions/DetailActions';
@@ -120,10 +118,8 @@ const clipboardTooltip = () => (
 const moleculeCreatorTooltip = () => (
   <Tooltip id="assign_button">create molecule</Tooltip>
 );
-
-class SampleDetails extends React.Component {
+export default class SampleDetails extends React.Component {
   // eslint-disable-next-line react/static-property-placement
-  static contextType = StoreContext;
 
   constructor(props) {
     super(props);
@@ -609,51 +605,14 @@ class SampleDetails extends React.Component {
     );
   }
 
-  versioningTab(index) {
-    const { sample } = this.state;
-    let logData = JSON.parse('{"id": 0, "changes": {}}');
-    if (sample.log_data !== undefined) logData = JSON.parse(this.context.VersioningStore.log_data);
-
-    return (
-      <Tab
-        eventKey={index}
-        title="Last Version"
-        key={`Last_Version_Sample_${sample.id.toString()}`}
-      >
-        <Table bordered hover responsive>
-          <tbody>
-            <tr>
-              <th>param name</th>
-              <th>old param value</th>
-              <th>new param value</th>
-            </tr>
-            {Object.keys(logData.changes).map((key) => (
-              <tr key={key}>
-                <td>{key}</td>
-                <td>{JSON.stringify(logData.changes[key].old)}</td>
-                <td>{JSON.stringify(logData.changes[key].new)}</td>
-              </tr>
-            ))}
-
-          </tbody>
-        </Table>
-        <ButtonToolbar>
-          <Button active id="undo" bsStyle="danger" onClick={() => this.undoLastChange()}>
-            Revert
-          </Button>
-        </ButtonToolbar>
-      </Tab>
-    );
-  }
-
   versioningTable(index) {
     const { sample } = this.state;
 
     return (
       <Tab
         eventKey={index}
-        title="All Versions"
-        key={`All_Versions_Sample_${sample.id.toString()}`}
+        title="Versions"
+        key={`Versions_Sample_${sample.id.toString()}`}
       >
         <ListGroupItem>
           <VersionsTable
@@ -1421,16 +1380,6 @@ class SampleDetails extends React.Component {
     this.setState({ showInchikey: !showInchikey });
   }
 
-  undoLastChange() {
-    let { sample } = this.state;
-    this.context.VersioningStore.setChanged(true);
-    SamplesFetcher.undoLastChange(sample).then((newSample) => {
-      this.context.VersioningStore.updateLogData(newSample.log_data);
-      sample = newSample;
-      this.setState({ sample });
-    });
-  }
-
   decoupleMolecule() {
     const { sample } = this.state;
     MoleculesFetcher.decouple(sample.molfile, sample.sample_svg_file, sample.decoupled)
@@ -1512,7 +1461,6 @@ class SampleDetails extends React.Component {
   render() {
     const { sample } = this.state;
     const { visible, isChemicalEdited } = this.state;
-    this.context.VersioningStore.updateLogData(sample.log_data);
     const tabContentsMap = {
       properties: this.samplePropertiesTab('properties'),
       analyses: this.sampleContainerTab('analyses'),
@@ -1520,8 +1468,7 @@ class SampleDetails extends React.Component {
       results: this.sampleImportReadoutTab('results'),
       qc_curation: this.qualityCheckTab('qc_curation'),
       measurements: this.measurementsTab('measurements'),
-      versioning: this.versioningTab('versioning'),
-      versioning2: this.versioningTable('versioning2')
+      versioning: this.versioningTable('versioning')
     };
 
     if (this.enableComputedProps) {
@@ -1629,8 +1576,6 @@ class SampleDetails extends React.Component {
     );
   }
 }
-
-export default observer(SampleDetails);
 
 SampleDetails.propTypes = {
   sample: PropTypes.object.isRequired,

@@ -355,8 +355,7 @@ export default class Sample extends Element {
       molecular_mass: this.molecular_mass,
       sum_formula: this.sum_formula,
       inventory_sample: this.inventory_sample,
-      segments: this.segments.map((s) => s.serialize()),
-      log_data: this.log_data_convert
+      segments: this.segments.map((s) => s.serialize())
     });
     
     return serialized;
