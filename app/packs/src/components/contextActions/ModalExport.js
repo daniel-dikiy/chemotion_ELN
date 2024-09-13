@@ -109,6 +109,7 @@ export default class ModalExport extends React.Component {
           { value: 'person', text: 'person', checked: false },
           { value: 'required_date', text: 'required date', checked: false },
           { value: 'ordered_date', text: 'ordered date', checked: false },
+          { value: 'expiration_date', text: 'expiration date', checked: false },
           { value: 'required_by', text: 'required by', checked: false },
           { value: ['safety_sheet_link_merck', 'safety_sheet_link_thermofischer'], text: 'safety sheet link', checked: false },
           { value: ['product_link_merck', 'product_link_thermofischer'], text: 'product link', checked: false },

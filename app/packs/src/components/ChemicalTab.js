@@ -403,7 +403,8 @@ export default class ChemicalTab extends React.Component {
   }
 
   textInput(data, label, parameter) {
-    const componentClass = parameter !== 'important_notes' && parameter !== 'disposal_info' && parameter !== 'sensitivity_storage'
+    const componentClass = parameter !== 'important_notes'
+      && parameter !== 'disposal_info' && parameter !== 'sensitivity_storage'
     && parameter !== 'solubility' ? 'input' : 'textarea';
     let value = '';
     if (parameter !== 'cas') {
@@ -420,9 +421,13 @@ export default class ChemicalTab extends React.Component {
       conditionalOverlay = null;
     }
     const checkLabel = label !== 'Date' && <ControlLabel>{label}</ControlLabel>;
+    const dateArray = ['date', 'required_by', 'expiration_date'];
 
     return (
-      <OverlayTrigger placement="top" overlay={parameter === 'date' || parameter === 'required_by' ? <Tooltip id="field-text-input">{conditionalOverlay}</Tooltip> : <div />}>
+      <OverlayTrigger
+        placement="top"
+        overlay={dateArray.includes(parameter)
+          ? <Tooltip id="field-text-input">{conditionalOverlay}</Tooltip> : <div />}>
         <FormGroup>
           {checkLabel}
           <FormControl
@@ -936,11 +941,14 @@ export default class ChemicalTab extends React.Component {
               </div>
             </div>
             <div className="text-input-group">
-              <div className="inventory-text-input">
+              <div className="text-input-price">
                 {this.textInput(data, 'Price', 'price')}
               </div>
               <div className="text-input-person">
                 {this.textInput(data, 'Person', 'person')}
+              </div>
+              <div className="text-input-storage-temperature">
+                {this.textInput(data, 'Storage Temperature', 'storage_temperature')}
               </div>
               <div className="text-input-date">
                 <Tabs id="tab-date">
@@ -949,6 +957,9 @@ export default class ChemicalTab extends React.Component {
                   </Tab>
                   <Tab eventKey="ordered" title="Ordered date">
                     {this.textInput(data, 'Date', 'ordered_date')}
+                  </Tab>
+                  <Tab eventKey="expired" title="Expiration date">
+                    {this.textInput(data, 'Date', 'expiration_date')}
                   </Tab>
                 </Tabs>
               </div>
