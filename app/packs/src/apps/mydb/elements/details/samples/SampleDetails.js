@@ -1563,7 +1563,7 @@ export default class SampleDetails extends React.Component {
               addInventoryTab={sample.inventory_sample}
             />
             {this.state.sfn ? <ScifinderSearch el={sample} /> : null}
-            <Tabs activeKey={activeTab} onSelect={this.handleSelect} id="SampleDetailsXTab">
+            <Tabs mountOnEnter unmountOnExit activeKey={activeTab} onSelect={this.handleSelect} id="SampleDetailsXTab">
               {tabContents}
             </Tabs>
           </ListGroup>
