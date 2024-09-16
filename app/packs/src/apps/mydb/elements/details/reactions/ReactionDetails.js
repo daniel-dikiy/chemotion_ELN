@@ -49,7 +49,8 @@ import { formatTimeStampsOfElement } from 'src/utilities/timezoneHelper';
 import ToggleButton from 'src/components/common/ToggleButton';
 import GasPhaseReactionActions from 'src/stores/alt/actions/GasPhaseReactionActions';
 import { ShowUserLabels } from 'src/components/UserLabels';
-
+// eslint-disable-next-line import/no-named-as-default
+import VersionsTable from 'src/apps/mydb/elements/details/VersionsTable';
 
 const handleProductClick = (product) => {
   const uri = Aviator.getCurrentURI();
@@ -260,14 +261,14 @@ export default class ReactionDetails extends Component {
     return reaction.hasMaterials() && reaction.SMGroupValid();
   }
 
-  productData() {
-    const { reaction } = this.state;
+  productData(reaction) {
+    const { products } = reaction;
     const { activeAnalysisTab } = this.state;
 
-    const tabs = reaction.products.map((product, key) => {
+    const tabs = products.map((product, key) => {
       const title = productLink(product);
       const setState = () => this.handleProductChange(product);
-      const handleSampleChanged = (cb) => this.handleProductChange(product, cb);
+      const handleSampleChanged = (_, cb) => this.handleProductChange(product, cb);
 
       return (
         <Tab
@@ -594,6 +595,21 @@ export default class ReactionDetails extends Component {
             onReactionChange={this.handleReactionChange}
           />
         </Tab>
+      ),
+      versions: (
+        <Tab
+          eventKey="versioning"
+          title="Versions"
+          key={`Versions_Reaction_${reaction.id.toString()}`}
+        >
+          <VersionsTable
+            type="reactions"
+            id={reaction.id}
+            element={reaction}
+            parent={this}
+            isEdited={reaction.changed}
+          />
+        </Tab>
       )
     };
 
@@ -630,6 +646,7 @@ export default class ReactionDetails extends Component {
           />
           {sfn ? <ScifinderSearch el={reaction} /> : null}
           <Tabs
+            mountOnEnter
             activeKey={currentActiveTab}
             onSelect={this.handleSelect}
             id="reaction-detail-tab"
