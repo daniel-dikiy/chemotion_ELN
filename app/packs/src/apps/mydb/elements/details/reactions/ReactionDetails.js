@@ -409,25 +409,31 @@ export default class ReactionDetails extends Component {
     this.setState({ visible });
   }
 
+  generateMoleculeImagePath(moleculeSvgFile) {
+    return `/images/molecules/${moleculeSvgFile}`;
+  }
+
   fetchIndigoSvg(material) {
     if (material.already_processed) {
-      return Promise.resolve(`/images/molecules/${material.sample_svg_file}`);
+      return Promise.resolve(this.generateMoleculeImagePath(material.sample_svg_file));
     }
 
     return IndigoServiceFetcher.rendertMolfileToSvg({ struct: material.molfile })
       .then((indigoSVG) => {
-        if (indigoSVG.error) throw new Error('Indigo SVG generation failed.');
+        if (indigoSVG.error) {
+          throw new Error('Failed to generate Indigo SVG.');
+        }
         return MoleculesFetcher.fetchByMolfile(material.molfile, indigoSVG, 'ketcher2');
       })
       .then((mofileresponse) => {
-        if (!mofileresponse) throw new Error('Molecule fetch failed.');
+        if (!mofileresponse || !mofileresponse.molecule_svg_file) {
+          throw new Error('Failed to fetch molecule from Molfile.');
+        }
         material.already_processed = true;
         material.sample_svg_file = mofileresponse.molecule_svg_file;
-        return `/images/molecules/${mofileresponse.molecule_svg_file}`;
+        return this.generateMoleculeImagePath(material.sample_svg_file);
       })
-      .catch(() => {
-        return Promise.resolve(material.svgPath);
-      });
+      .catch(() => Promise.resolve(material.svgPath || null));
   }
 
 

@@ -153,7 +153,6 @@ export default class SampleDetails extends React.Component {
       saveInventoryAction: false,
       isChemicalEdited: false,
       currentUser,
-      ketcherPath: null
     };
 
     this.enableComputedProps = MatrixCheck(currentUser.matrix, 'computedProp');
