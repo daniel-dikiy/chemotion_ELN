@@ -83,7 +83,6 @@ import ScifinderSearch from 'src/components/scifinder/ScifinderSearch';
 import MolViewerBtn from 'src/components/viewer/MolViewerBtn';
 import MolViewerSet from 'src/components/viewer/MolViewerSet';
 import AttachmentFetcher from 'src/fetchers/AttachmentFetcher';
-import IndigoServiceFetcher from 'src/fetchers/InidigoFetcher';
 import MoleculesFetcher from 'src/fetchers/MoleculesFetcher';
 import Container from 'src/models/Container';
 import Sample from 'src/models/Sample';
@@ -154,7 +153,6 @@ export default class SampleDetails extends React.Component {
       saveInventoryAction: false,
       isChemicalEdited: false,
       currentUser,
-      molfileConverstionRequired: false,
       ketcherPath: null
     };
 
@@ -183,8 +181,6 @@ export default class SampleDetails extends React.Component {
 
     this.handleStructureEditorSave = this.handleStructureEditorSave.bind(this);
     this.handleStructureEditorCancel = this.handleStructureEditorCancel.bind(this);
-    this.convertFileContentWithIndigo = this.convertFileContentWithIndigo.bind(this);
-    this.isMolfileConverstionRequired = this.isMolfileConverstionRequired.bind(this);
   }
 
   componentDidMount() {
@@ -199,8 +195,6 @@ export default class SampleDetails extends React.Component {
     if (MatrixCheck(currentUser.matrix, commentActivation) && !sample.isNew) {
       CommentActions.fetchComments(sample);
     }
-
-    this.isMolfileConverstionRequired();
   }
 
   UNSAFE_componentWillReceiveProps(nextProps) {
@@ -1423,7 +1417,6 @@ export default class SampleDetails extends React.Component {
   }
 
   svgOrLoading(sample) {
-    const { molfileConverstionRequired } = this.state;
     let svgPath = '';
     if (this.state.loadingMolecule) {
       svgPath = '/images/wild_card/loading-bubbles.svg';
@@ -1449,20 +1442,8 @@ export default class SampleDetails extends React.Component {
               <Glyphicon className="pull-right" glyph="pencil" />
               <SVG key={svgPath} src={svgPath} className="molecule-mid" />
             </div>
-
-            {molfileConverstionRequired &&
-              <div
-                className={"file-type-conversion-button"}
-                onClick={this.convertFileContentWithIndigo}
-                onKeyPress
-                role="button"
-                tabIndex="1"
-              >
-                <Glyphicon className="pull-right" glyph="refresh" />
-              </div>
-            }
             <MolViewerBtn
-              className={classNames("structure-editor-container", !molfileConverstionRequired && "structure-editor-container-without-convert-button")}
+              className={classNames("structure-editor-container", "structure-editor-container-without-convert-button")}
               disabled={sample.isNew || !this.enableMoleculeViewer}
               fileContent={sample.molfile}
               isPublic={false}
@@ -1524,32 +1505,6 @@ export default class SampleDetails extends React.Component {
   toggleInchi() {
     const { showInchikey } = this.state;
     this.setState({ showInchikey: !showInchikey });
-  }
-
-  async convertFileContentWithIndigo() {
-    const { molfileConverstionRequired, sample } = this.state;
-    const { molfile } = sample;
-    if (molfileConverstionRequired) {
-      let indigoMolfile = await IndigoServiceFetcher.convertMolfileStructure({
-        struct: molfile,
-      });
-      indigoMolfile = JSON.parse(indigoMolfile);
-      if (indigoMolfile?.struct) {
-        const indigoSVG = await IndigoServiceFetcher.rendertMolfileToSvg({
-          struct: molfile,
-        });
-        this.setState({ sample });
-        this.handleStructureEditorSave(indigoMolfile?.struct, indigoSVG, { smiles: '' }, 'ketcher2');
-        this.setState({ molfileConverstionRequired: false });
-      }
-    }
-  }
-
-  isMolfileConverstionRequired() {
-    const molfile = this.state.sample.molfile;
-    if (!molfile?.includes("INDIGO")) {
-      this.setState({ molfileConverstionRequired: true });
-    }
   }
 
   decoupleMolecule() {
