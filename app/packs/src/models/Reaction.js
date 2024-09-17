@@ -873,20 +873,6 @@ export default class Reaction extends Element {
           mat.reference = group[index].reference;
           mat.gas_type = group[index].gas_type;
           mat.gas_phase_data = group[index].gas_phase_data;
-          if (!mat.molfile?.includes("INDIGO")) {
-            let indigoMolfile = await IndigoServiceFetcher.convertMolfileStructure({
-              struct: mat.molfile,
-            });
-            mat.molfile = JSON.parse(indigoMolfile).struct;
-            const indigoSVG = await IndigoServiceFetcher.rendertMolfileToSvg({
-              struct: mat.molfile,
-            });
-            // mat.sample_svg_file = "8b5464922abef038bf810633e035a9ab52897265001d7c573fa39f27ff317fdc1c1e24d6258925f560bd8499ff4a25e5f612eaa5329d5c68e339b378bded8da0.svg";
-            console.log(mat.sample_svg_file);
-            // console.log({ indigoSVG, molfile: mat });
-          } else {
-            console.log("not required!!!! is indigo");
-          }
           mat.updateChecksum();
           group[index] = mat;
           break;

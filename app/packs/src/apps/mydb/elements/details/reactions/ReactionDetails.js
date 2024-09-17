@@ -416,16 +416,17 @@ export default class ReactionDetails extends Component {
 
     return IndigoServiceFetcher.rendertMolfileToSvg({ struct: material.molfile })
       .then((indigoSVG) => {
+        if (indigoSVG.error) throw new Error('Indigo SVG generation failed.');
         return MoleculesFetcher.fetchByMolfile(material.molfile, indigoSVG, 'ketcher2');
       })
       .then((mofileresponse) => {
+        if (!mofileresponse) throw new Error('Molecule fetch failed.');
         material.already_processed = true;
         material.sample_svg_file = mofileresponse.molecule_svg_file;
         return `/images/molecules/${mofileresponse.molecule_svg_file}`;
       })
-      .catch((error) => {
-        console.error("Error during the processing:", error);
-        return null;
+      .catch(() => {
+        return Promise.resolve(material.svgPath);
       });
   }
 
