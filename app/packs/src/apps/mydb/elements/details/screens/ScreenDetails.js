@@ -62,39 +62,14 @@ export default class ScreenDetails extends Component {
     }
   }
 
-  componentWillReceiveProps(nextProps) {
-    const { screen } = nextProps;
-    this.setState({ screen });
-  }
-
-  componentWillUnmount() {
-    UIStore.unlisten(this.onUIStoreChange);
-  }
-
   // eslint-disable-next-line camelcase
   UNSAFE_componentWillReceiveProps(nextProps) {
     const { screen } = nextProps;
     this.setState({ screen });
   }
 
-  onUIStoreChange(state) {
-    if (state.screen.activeTab !== this.state.activeTab) {
-      this.setState({
-        activeTab: state.screen.activeTab
-      });
-    }
-  }
-
-  onUIStoreChange(state) {
-    if (state.screen.activeTab != this.state.activeTab) {
-      this.setState({
-        activeTab: state.screen.activeTab
-      });
-    }
-  }
-
-  onTabPositionChanged(visible) {
-    this.setState({ visible });
+  componentWillUnmount() {
+    UIStore.unlisten(this.onUIStoreChange);
   }
 
   handleSubmit() {
@@ -126,15 +101,36 @@ export default class ScreenDetails extends Component {
   handleSegmentsChange(se) {
     const { screen } = this.state;
     const { segments } = screen;
-    const idx = findIndex(segments, o => o.segment_klass_id === se.segment_klass_id);
+    const idx = findIndex(segments, (o) => o.segment_klass_id === se.segment_klass_id);
     if (idx >= 0) { segments.splice(idx, 1, se); } else { segments.push(se); }
     screen.segments = segments;
     screen.changed = true;
     this.setState({ screen });
   }
 
+  // eslint-disable-next-line react/no-unused-class-component-methods
   handleScreenChanged(screen) {
     this.setState({ screen });
+  }
+
+  handleSelect(eventKey) {
+    UIActions.selectTab({ tabKey: eventKey, type: 'screen' });
+    this.setState({
+      activeTab: eventKey
+    });
+  }
+
+  onUIStoreChange(state) {
+    const { activeTab } = this.state;
+    if (state.screen.activeTab !== activeTab) {
+      this.setState({
+        activeTab: state.screen.activeTab
+      });
+    }
+  }
+
+  onTabPositionChanged(visible) {
+    this.setState({ visible });
   }
 
   dropResearchPlan(researchPlan) {
@@ -145,7 +141,7 @@ export default class ScreenDetails extends Component {
 
   deleteResearchPlan(researchPlanID) {
     const { screen } = this.state;
-    const researchPlanIndex = screen.research_plans.findIndex(rp => rp.id === researchPlanID);
+    const researchPlanIndex = screen.research_plans.findIndex((rp) => rp.id === researchPlanID);
     screen.research_plans.splice(researchPlanIndex, 1);
 
     this.setState({ screen });
@@ -153,7 +149,7 @@ export default class ScreenDetails extends Component {
 
   updateResearchPlan(researchPlan) {
     const { screen } = this.state;
-    const researchPlanIndex = screen.research_plans.findIndex(rp => rp.id === researchPlan.id);
+    const researchPlanIndex = screen.research_plans.findIndex((rp) => rp.id === researchPlan.id);
     screen.research_plans[researchPlanIndex] = researchPlan;
   }
 
@@ -163,7 +159,7 @@ export default class ScreenDetails extends Component {
 
     ResearchPlansFetcher.update(researchPlan)
       .then((result) => {
-        const researchPlanIndex = screen.research_plans.findIndex(rp => rp.id === researchPlan.id);
+        const researchPlanIndex = screen.research_plans.findIndex((rp) => rp.id === researchPlan.id);
         screen.research_plans[researchPlanIndex] = result;
         ElementActions.updateEmbeddedResearchPlan(result);
       }).catch((errorMessage) => {
@@ -188,14 +184,16 @@ export default class ScreenDetails extends Component {
   screenHeader(screen) {
     const saveBtnDisplay = screen.isEdited ? '' : 'none';
     const datetp = formatTimeStampsOfElement(screen || {});
-    const { showCommentSection, comments } = this.props;
+    const { toggleFullScreen } = this.props;
 
     return (
       <div>
         <OverlayTrigger placement="bottom" overlay={<Tooltip id="screenDatesx">{datetp}</Tooltip>}>
           <span>
             <i className="icon-screen" />
-            &nbsp;<span>{screen.name}</span> &nbsp;
+            &nbsp;
+            <span>{screen.name}</span>
+            &nbsp;
           </span>
         </OverlayTrigger>
         <ElementCollectionLabels element={screen} placement="right" />
@@ -223,7 +221,7 @@ export default class ScreenDetails extends Component {
             bsStyle="info"
             bsSize="xsmall"
             className="button-right"
-            onClick={() => this.props.toggleFullScreen()}
+            onClick={() => toggleFullScreen()}
           >
             <i className="fa fa-expand" />
           </Button>
@@ -253,7 +251,7 @@ export default class ScreenDetails extends Component {
                     <FormControl
                       type="text"
                       value={name || ''}
-                      onChange={event => this.handleInputChange('name', event)}
+                      onChange={(event) => this.handleInputChange('name', event)}
                       disabled={screen.isMethodDisabled('name')}
                     />
                   </FormGroup>
@@ -264,7 +262,7 @@ export default class ScreenDetails extends Component {
                     <FormControl
                       type="text"
                       value={collaborator || ''}
-                      onChange={event => this.handleInputChange('collaborator', event)}
+                      onChange={(event) => this.handleInputChange('collaborator', event)}
                       disabled={screen.isMethodDisabled('collaborator')}
                     />
                   </FormGroup>
@@ -277,18 +275,18 @@ export default class ScreenDetails extends Component {
                     <FormControl
                       type="text"
                       value={requirements || ''}
-                      onChange={event => this.handleInputChange('requirements', event)}
+                      onChange={(event) => this.handleInputChange('requirements', event)}
                       disabled={screen.isMethodDisabled('requirements')}
                     />
                   </FormGroup>
                 </td>
-                <td >
+                <td>
                   <FormGroup>
                     <ControlLabel>Conditions</ControlLabel>
                     <FormControl
                       type="text"
                       value={conditions || ''}
-                      onChange={event => this.handleInputChange('conditions', event)}
+                      onChange={(event) => this.handleInputChange('conditions', event)}
                       disabled={screen.isMethodDisabled('conditions')}
                     />
                   </FormGroup>
@@ -301,7 +299,7 @@ export default class ScreenDetails extends Component {
                     <FormControl
                       type="text"
                       value={result || ''}
-                      onChange={event => this.handleInputChange('result', event)}
+                      onChange={(event) => this.handleInputChange('result', event)}
                       disabled={screen.isMethodDisabled('result')}
                     />
                   </FormGroup>
@@ -313,7 +311,7 @@ export default class ScreenDetails extends Component {
                     <ControlLabel>Description</ControlLabel>
                     <QuillEditor
                       value={description}
-                      onChange={event => this.handleInputChange('description', { target: { value: event } })}
+                      onChange={(event) => this.handleInputChange('description', { target: { value: event } })}
                       disabled={screen.isMethodDisabled('description')}
                     />
                   </FormGroup>
@@ -327,29 +325,23 @@ export default class ScreenDetails extends Component {
           <h4 className="list-group-item-heading">Wellplates</h4>
           <ScreenWellplates
             wellplates={wellplates}
-            dropWellplate={wellplate => this.dropWellplate(wellplate)}
-            deleteWellplate={wellplate => this.deleteWellplate(wellplate)}
+            dropWellplate={(wellplate) => this.dropWellplate(wellplate)}
+            deleteWellplate={(wellplate) => this.deleteWellplate(wellplate)}
           />
         </ListGroupItem>
       </ListGroup>
     );
   }
 
-  handleSelect(eventKey) {
-    UIActions.selectTab({ tabKey: eventKey, type: 'screen' });
-    this.setState({
-      activeTab: eventKey
-    });
-  }
-
   updateComponentGraphData(data) {
-    const { screen } = this.state
+    const { screen } = this.state;
     screen.componentGraphData = data;
     this.setState({ screen });
   }
 
   switchToResearchPlanTab() {
-    if (this.state.activeTab == 'researchPlans') { return; }
+    const { activeTab } = this.state;
+    if (activeTab === 'researchPlans') { return; }
     // call the pre-existing method to act as if a user had clicked on the research plans tab
     this.handleSelect('researchPlans');
   }
@@ -358,13 +350,8 @@ export default class ScreenDetails extends Component {
     this.setState({ expandedResearchPlanId: researchPlanId });
   }
 
-  scrollToResearchPlan(researchPlanId) {
-
-  }
-
-
   render() {
-    const { screen, visible } = this.state;
+    const { screen, visible, expandedResearchPlanId } = this.state;
     const submitLabel = screen.isNew ? 'Create' : 'Save';
 
     const tabContentsMap = {
@@ -391,11 +378,11 @@ export default class ScreenDetails extends Component {
         <Tab eventKey="researchPlans" title="Research Plans" key={`research_plans_${screen.id}`}>
           <ScreenResearchPlans
             researchPlans={screen.research_plans}
-            expandedResearchPlanId={this.state.expandedResearchPlanId}
-            dropResearchPlan={researchPlan => this.dropResearchPlan(researchPlan)}
-            deleteResearchPlan={researchPlan => this.deleteResearchPlan(researchPlan)}
-            updateResearchPlan={researchPlan => this.updateResearchPlan(researchPlan)}
-            saveResearchPlan={researchPlan => this.saveResearchPlan(researchPlan)}
+            expandedResearchPlanId={expandedResearchPlanId}
+            dropResearchPlan={(researchPlan) => this.dropResearchPlan(researchPlan)}
+            deleteResearchPlan={(researchPlan) => this.deleteResearchPlan(researchPlan)}
+            updateResearchPlan={(researchPlan) => this.updateResearchPlan(researchPlan)}
+            saveResearchPlan={(researchPlan) => this.saveResearchPlan(researchPlan)}
           />
         </Tab>
       )
@@ -415,15 +402,14 @@ export default class ScreenDetails extends Component {
       if (tabContent) { tabContents.push(tabContent); }
     });
 
-    const activeTab = (this.state.activeTab !== 0 && this.state.activeTab) || visible[0];
+    const { activeTab } = (this.state !== 0 && this.state) || visible[0];
 
     const flowConfiguration = {
       preview: {
         onNodeDoubleClick: (_mouseEvent, node) => {
-          const researchPlanId = parseInt(node.id)
-          this.switchToResearchPlanTab()
-          this.expandResearchPlan(researchPlanId)
-          this.scrollToResearchPlan(researchPlanId)
+          const researchPlanId = parseInt(node.id, 10);
+          this.switchToResearchPlanTab();
+          this.expandResearchPlan(researchPlanId);
         }
       },
       editor: {
@@ -449,7 +435,7 @@ export default class ScreenDetails extends Component {
             tabTitles={tabTitlesMap}
             onTabPositionChanged={this.onTabPositionChanged}
           />
-          <Tabs activeKey={activeTab} onSelect={key => this.handleSelect(key)} id="screen-detail-tab">
+          <Tabs activeKey={activeTab} onSelect={(key) => this.handleSelect(key)} id="screen-detail-tab">
             {tabContents}
           </Tabs>
           <ButtonToolbar>
