@@ -34,6 +34,8 @@ import CommentActions from 'src/stores/alt/actions/CommentActions';
 import CommentModal from 'src/components/common/CommentModal';
 import { commentActivation } from 'src/utilities/CommentHelper';
 import { formatTimeStampsOfElement } from 'src/utilities/timezoneHelper';
+// eslint-disable-next-line import/no-named-as-default
+import VersionsTable from 'src/apps/mydb/elements/details/VersionsTable';
 
 export default class ScreenDetails extends Component {
   constructor(props) {
@@ -385,7 +387,22 @@ export default class ScreenDetails extends Component {
             saveResearchPlan={(researchPlan) => this.saveResearchPlan(researchPlan)}
           />
         </Tab>
-      )
+      ),
+      versions: (
+        <Tab
+          eventKey="versioning"
+          title="Versions"
+          key={`Versions_Reaction_${screen.id.toString()}`}
+        >
+          <VersionsTable
+            type="screens"
+            id={screen.id}
+            element={screen}
+            parent={this}
+            isEdited={screen.isEdited}
+          />
+        </Tab>
+      ),
     };
 
     const tabTitlesMap = {
@@ -435,7 +452,13 @@ export default class ScreenDetails extends Component {
             tabTitles={tabTitlesMap}
             onTabPositionChanged={this.onTabPositionChanged}
           />
-          <Tabs activeKey={activeTab} onSelect={(key) => this.handleSelect(key)} id="screen-detail-tab">
+          <Tabs
+            mountOnEnter
+            unmountOnExit
+            activeKey={activeTab}
+            onSelect={(key) => this.handleSelect(key)}
+            id="screen-detail-tab"
+          >
             {tabContents}
           </Tabs>
           <ButtonToolbar>
