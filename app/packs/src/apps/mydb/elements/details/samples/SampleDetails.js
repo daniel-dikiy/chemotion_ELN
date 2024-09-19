@@ -443,6 +443,16 @@ export default class SampleDetails extends React.Component {
     this.setState({ isChemicalEdited: boolean });
   };
 
+  matchSelectedCollection(currentCollection) {
+    const { sample } = this.props;
+    if (sample.isNew) {
+      return true;
+    }
+    const collection_labels = sample.tag?.taggable_data?.collection_labels || [];
+    const result = collection_labels.filter((object) => object.id === currentCollection.id).length > 0;
+    return result;
+  }
+
   saveSampleOrInventory(closeView) {
     const { activeTab, sample } = this.state;
     if (activeTab === 'inventory' && sample.inventory_sample) {
