@@ -425,6 +425,7 @@ export default class ResearchPlanDetails extends Component {
                 disabled={researchPlan.isMethodDisabled('name')}
                 onChange={this.handleNameChange}
                 edit={edit}
+                onCopyToMetadata={this.handleCopyToMetadata.bind(this)}
               />
             </div>
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-end' }}>
