@@ -54,7 +54,7 @@ export default class ModalExport extends React.Component {
           { value: ['molarity_value', 'molarity_unit'], text: 'molarity', checked: false },
           { value: 'density', text: 'density', checked: false },
           { value: 'molfile', text: 'molfile', checked: false },
-          //  {value: "purity", text: "purity", checked: false},
+          { value: "purity", text: "purity", checked: false },
           { value: "solvent", text: "solvent", checked: false },
           { value: "location", text: "location", checked: false },
           { value: "is_top_secret", text: "is top secret?", checked: false },

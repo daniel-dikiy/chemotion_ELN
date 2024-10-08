@@ -232,6 +232,8 @@ module Import
     end
 
     def process_sample_fields(sample, db_column, field, row)
+      sample[field] = row[field] if field == 'purity'
+
       additional_columns = %w[cas mn.name].freeze
       return unless included_fields.include?(db_column) || additional_columns.include?(db_column)
 
